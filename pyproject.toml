@@ -1,0 +1,47 @@
+[project]
+name = "padwan-cli"
+version = "0.1.0"
+description = "CLI and TUI for padwan-llm"
+readme = "README.md"
+authors = [
+    { email = "julien.brayere@polarsen.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "padwan-llm>=0.1.0",
+    "piou[tui]>=0.32.0",
+]
+
+[project.scripts]
+padwan-cli = "padwan_cli:main_tui"
+
+[build-system]
+requires = ["uv_build>=0.9.28,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+
+[tool.uv.sources]
+padwan-llm = { path = "../padwan-llm", editable = true }
+
+[dependency-groups]
+dev = [
+    "piou[tui-reload]>=0.33.0",
+    "pytest>=8.0.0",
+    "ruff>=0.11.0",
+]
+docs = [
+    "mkdocs>=1.6.0",
+    "mkdocs-material>=9.5.0",
+]
+bump = [
+    "commitizen>=4.0.0",
+]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_provider = "pep621"
+tag_format = "$version"
+update_changelog_on_bump = true
+bump_message = "chore(release): release $current_version → $new_version [skip ci]"

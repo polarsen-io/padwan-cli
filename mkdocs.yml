@@ -1,0 +1,60 @@
+site_name: Padwan CLI
+site_description: Interactive CLI and TUI for padwan-llm
+site_url: https://polarsen.github.io/padwan-cli
+repo_url: https://github.com/Polarsen/padwan-cli
+repo_name: Polarsen/padwan-cli
+
+theme:
+  name: material
+  logo: static/logo.png
+  favicon: static/logo.png
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: deep purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: deep purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.expand
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.integrate
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
+
+plugins:
+  - search
+
+nav:
+  - Introduction: index.md
+  - Getting Started: getting-started.md
+  - Commands:
+      - Chat: commands/chat.md
+      - Batch: commands/batch.md

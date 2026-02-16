@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [master]
+    types: [completed]
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  bump:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.POLARSEN_BOT_PAT }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
+
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.14"
+
+      - name: Configure Git
+        run: |
+          git config user.name "Polarsen bot"
+          git config user.email "bot@polarsen.io"
+
+      - name: Bump version
+        run: |
+          uv run --only-group=bump cz bump --yes
+
+      - name: Get new version
+        id: get_version
+        run: |
+          VERSION=$(uv run --only-group=bump cz version --project)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build package
+        run: uv build
+
+      - name: Extract release notes
+        run: |
+          awk '/^## /{if(p) exit; p=1} p' CHANGELOG.md > RELEASE_NOTES.md
+
+      - name: Push changes
+        run: git push origin master --tags
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
+        with:
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          body_path: RELEASE_NOTES.md
+          files: dist/*
+          token: ${{ secrets.POLARSEN_BOT_PAT }}
+
+      - name: Publish to PyPI
+        run: uv publish
