@@ -23,11 +23,13 @@ build-backend = "uv_build"
 module-root = ""
 
 [tool.uv.sources]
-padwan-llm = { path = "../padwan-llm", editable = true, group = "dev" }
+padwan-llm = { path = "../padwan-llm", editable = true, group = "local" }
 
 [dependency-groups]
-dev = [
+local = [
     "padwan-llm",
+]
+dev = [
     "piou[tui-reload]>=0.33.0",
     "pytest>=8.0.0",
     "ruff>=0.11.0",

@@ -439,7 +439,6 @@ bump = [
     { name = "commitizen" },
 ]
 dev = [
-    { name = "padwan-llm" },
     { name = "piou", extra = ["tui-reload"] },
     { name = "pytest" },
     { name = "ruff" },
@@ -447,6 +446,9 @@ dev = [
 docs = [
     { name = "mkdocs" },
     { name = "mkdocs-material" },
+]
+local = [
+    { name = "padwan-llm" },
 ]
 
 [package.metadata]
@@ -458,7 +460,6 @@ requires-dist = [
 [package.metadata.requires-dev]
 bump = [{ name = "commitizen", specifier = ">=4.0.0" }]
 dev = [
-    { name = "padwan-llm", editable = "../padwan-llm" },
     { name = "piou", extras = ["tui-reload"], specifier = ">=0.33.0" },
     { name = "pytest", specifier = ">=8.0.0" },
     { name = "ruff", specifier = ">=0.11.0" },
@@ -467,6 +468,7 @@ docs = [
     { name = "mkdocs", specifier = ">=1.6.0" },
     { name = "mkdocs-material", specifier = ">=9.5.0" },
 ]
+local = [{ name = "padwan-llm", editable = "../padwan-llm" }]
 
 [[package]]
 name = "padwan-llm"
