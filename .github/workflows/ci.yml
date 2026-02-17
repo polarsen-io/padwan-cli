@@ -31,6 +31,8 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --all-extras --group dev
+        env:
+          UV_NO_SOURCES: true
 
       - name: Running lint check
         run: uv run ruff check .

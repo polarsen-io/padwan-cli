@@ -447,13 +447,10 @@ docs = [
     { name = "mkdocs" },
     { name = "mkdocs-material" },
 ]
-local = [
-    { name = "padwan-llm" },
-]
 
 [package.metadata]
 requires-dist = [
-    { name = "padwan-llm", specifier = ">=0.1.0" },
+    { name = "padwan-llm", editable = "../padwan-llm" },
     { name = "piou", extras = ["tui"], specifier = ">=0.32.0" },
 ]
 
@@ -468,7 +465,6 @@ docs = [
     { name = "mkdocs", specifier = ">=1.6.0" },
     { name = "mkdocs-material", specifier = ">=9.5.0" },
 ]
-local = [{ name = "padwan-llm", editable = "../padwan-llm" }]
 
 [[package]]
 name = "padwan-llm"
