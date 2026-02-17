@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://polarsen.github.io/padwan-cli/</loc>
+         <lastmod>2026-02-17</lastmod>
+    </url>
+    <url>
+         <loc>https://polarsen.github.io/padwan-cli/getting-started/</loc>
+         <lastmod>2026-02-17</lastmod>
+    </url>
+    <url>
+         <loc>https://polarsen.github.io/padwan-cli/commands/batch/</loc>
+         <lastmod>2026-02-17</lastmod>
+    </url>
+    <url>
+         <loc>https://polarsen.github.io/padwan-cli/commands/chat/</loc>
+         <lastmod>2026-02-17</lastmod>
+    </url>
+</urlset>
