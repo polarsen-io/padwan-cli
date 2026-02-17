@@ -1,3 +1,9 @@
+## 0.2.3 (2026-02-17)
+
+### Fix
+
+- correct GitHub org in README links
+
 ## 0.2.2 (2026-02-17)
 
 ### Fix
