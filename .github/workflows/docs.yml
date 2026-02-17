@@ -8,6 +8,9 @@ on:
 permissions:
   contents: write
 
+env:
+  UV_NO_SOURCES: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
