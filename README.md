@@ -2,7 +2,7 @@
 
 Interactive CLI/TUI for `padwan-llm`.
 
-<img alt="Chat demo" src="https://github.com/Polarsen/padwan-cli/raw/main/docs/static/chat.gif" width="800"/>
+<img alt="Chat demo" src="https://github.com/Polarsen/padwan-cli/raw/master/docs/static/chat.gif" width="800"/>
 
 ## Quick start
 
