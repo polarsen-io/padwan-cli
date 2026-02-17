@@ -450,7 +450,7 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "padwan-llm", editable = "../padwan-llm" },
+    { name = "padwan-llm", specifier = ">=0.1.0" },
     { name = "piou", extras = ["tui"], specifier = ">=0.32.0" },
 ]
 
@@ -468,35 +468,14 @@ docs = [
 
 [[package]]
 name = "padwan-llm"
-version = "0.1.5"
-source = { editable = "../padwan-llm" }
+version = "0.1.6"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "niquests" },
 ]
-
-[package.metadata]
-requires-dist = [{ name = "niquests", specifier = ">=3.17.0" }]
-
-[package.metadata.requires-dev]
-bump = [{ name = "commitizen", specifier = ">=4.0.0" }]
-dev = [
-    { name = "google-genai", specifier = ">=1.0.0" },
-    { name = "openai", specifier = ">=1.0.0" },
-    { name = "prek", specifier = ">=0.2.30" },
-    { name = "pyright", specifier = ">=1.1.400" },
-    { name = "pytest", specifier = ">=8.0.0" },
-    { name = "pytest-asyncio", specifier = ">=0.25.0" },
-    { name = "pytest-cov", specifier = ">=6.0.0" },
-    { name = "ruff", specifier = ">=0.11.0" },
-]
-docs = [
-    { name = "mkdocs", specifier = ">=1.6.0" },
-    { name = "mkdocs-material", specifier = ">=9.5.0" },
-]
-research = [
-    { name = "jupyter", specifier = ">=1.1.1" },
-    { name = "pandas", specifier = ">=2.3.3" },
-    { name = "python-dotenv", specifier = ">=1.2.1" },
+sdist = { url = "https://files.pythonhosted.org/packages/5c/9a/1502e6a2286e2e2485209ededf3bc69d267df90ad136add089408386b3c0/padwan_llm-0.1.6.tar.gz", hash = "sha256:f7860689c5a6b756953311d1b38e362bc40e3f86f11d4e7959ef72b8f31889cf", size = 18850, upload-time = "2026-02-15T22:05:40.644Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bf/a0/edbba39343dd38165b9f5444e177eed707093ff86fdec57f7ef23cc0b135/padwan_llm-0.1.6-py3-none-any.whl", hash = "sha256:efa56467fcf589032ae684e3bb4faaabd594a45ff4814d17cfcb88a09d54fcb8", size = 27187, upload-time = "2026-02-15T22:05:39.357Z" },
 ]
 
 [[package]]
