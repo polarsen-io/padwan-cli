@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/padwan-cli.iml" filepath="$PROJECT_DIR$/.idea/padwan-cli.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../padwan-llm/.idea/padwan-llm.iml" filepath="$PROJECT_DIR$/../padwan-llm/.idea/padwan-llm.iml" />
-    </modules>
-  </component>
-</project>
