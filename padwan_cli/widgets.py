@@ -131,7 +131,7 @@ class BatchResultWidget(Static):
         for result in self._results:
             # Header with key and token info
             lines.append(
-                f"[cyan][{result.key}][/cyan] "
+                f"[cyan]\\[{result.key}][/cyan] "
                 f"[dim]({result.input_tokens} in, {result.output_tokens} out, "
                 f"{result.total_tokens} total tokens)[/dim]"
             )
