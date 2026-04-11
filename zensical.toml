@@ -1,0 +1,71 @@
+[project]
+
+site_name = "Padwan CLI"
+site_description = "Interactive CLI and TUI for padwan-llm"
+site_url = "https://polarsen-io.github.io/padwan-cli"
+
+repo_url = "https://github.com/polarsen-io/padwan-cli"
+repo_name = "polarsen-io/padwan-cli"
+
+extra_css = ["stylesheets/extra.css"]
+
+nav = [
+  { "Introduction" = "index.md" },
+  { "Getting Started" = "getting-started.md" },
+  { "Commands" = [
+    { "Chat" = "commands/chat.md" },
+    { "Batch" = "commands/batch.md" },
+  ] },
+]
+
+[project.theme]
+
+logo = "static/logo.png"
+favicon = "static/logo.png"
+features = [
+  "navigation.sections",
+  "navigation.top",
+  "navigation.expand",
+  "search.suggest",
+  "search.highlight",
+  "content.code.copy",
+  "toc.integrate",
+]
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+# Markdown extensions
+
+[project.markdown_extensions.admonition]
+
+[project.markdown_extensions.attr_list]
+
+[project.markdown_extensions.md_in_html]
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
+
+[project.markdown_extensions.pymdownx.inlinehilite]
+
+[project.markdown_extensions.pymdownx.snippets]
+
+[project.markdown_extensions.pymdownx.superfences]
+
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true

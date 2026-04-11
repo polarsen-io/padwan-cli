@@ -1,3 +1,5 @@
+/* Custom purple palette — wired to Zensical via primary="custom" / accent="custom" in zensical.toml */
+
 :root {
   --md-primary-fg-color: #6B4EE6;
   --md-primary-fg-color--light: #8B6FFF;
