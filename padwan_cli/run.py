@@ -3,6 +3,7 @@ from __future__ import annotations
 import sys
 
 from piou import Cli, Option
+from piou.tui import get_tui_context
 
 from rich.table import Table
 
@@ -30,6 +31,14 @@ cli = Cli(description="Padwan CLI for the unified LLM client library")
 
 cli.add_command_group(batch_group)
 cli.add_command_group(chat_group)
+
+
+@cli.tui_on_ready
+def _tui_startup_hint() -> None:
+    """Show a hint pointing new users at the command palette when the TUI opens."""
+    get_tui_context().set_hint(
+        "Type / to browse commands - e.g. /chat:send 'Hello'"
+    )
 
 
 @cli.command("models", help="List available models")

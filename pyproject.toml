@@ -8,7 +8,7 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
-    "padwan-llm>=0.3.0",
+    "padwan-llm>=0.5.1",
     "piou[tui]>=0.32.0",
 ]
 

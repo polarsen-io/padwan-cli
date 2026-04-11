@@ -14,14 +14,14 @@ Create a new batch job from inline prompts or a file.
 padwan-cli batch create -p "Summarize quantum computing" -p "Explain CRISPR"
 
 # From a JSON file
-padwan-cli batch create -f prompts.json -m gemini-2.0-flash -n my-batch
+padwan-cli batch create -f prompts.json -m gemini-2.5-flash -n my-batch
 ```
 
 | Option | Default | Description |
 |---|---|---|
 | `-p`, `--prompt` | | Inline prompt (can be repeated) |
 | `-f`, `--file` | | Path to a JSON or text file containing prompts |
-| `-m`, `--model` | `gemini-2.0-flash` | Model to use |
+| `-m`, `--model` | `gemini-2.5-flash` | Model to use |
 | `-n`, `--name` | `cli-batch` | Display name for the batch job |
 
 ### Input file formats

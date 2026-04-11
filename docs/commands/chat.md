@@ -34,7 +34,10 @@ in: 42 out: 128 cached: 0 | session: 170
 
 ### Session persistence
 
-Each model gets its own conversation session. Sending messages to `gpt-4o-mini` and then to `gemini-2.0-flash` creates two independent sessions. Switching back to a model resumes where you left off.
+Each model gets its own conversation session. 
+Sending messages to `gpt-4o-mini` and then to `gemini-2.5-flash`
+creates two independent sessions.
+Switching back to a model resumes where you left off.
 
 ## `chat clear`
 

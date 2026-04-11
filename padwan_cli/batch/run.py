@@ -38,7 +38,7 @@ async def batch_create(
         None, "-f", "--file", help="Read prompts from JSON/text file"
     ),
     model: str = Option(
-        "gemini-2.0-flash",
+        "gemini-2.5-flash",
         "-m",
         "--model",
         help="Model to use",

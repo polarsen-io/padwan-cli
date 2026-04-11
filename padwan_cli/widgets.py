@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+import json
+from typing import TYPE_CHECKING, Any, cast
 
 from rich.text import Text
 from textual.widgets import Static
@@ -13,6 +14,8 @@ if TYPE_CHECKING:
 # Colors for chat messages
 USER_COLOR = "#87ceeb"
 ASSISTANT_COLOR = "#98fb98"
+TOOL_CALL_COLOR = "#ffa500"
+THOUGHT_COLOR = "#9370db"
 
 # Colors for batch job states
 STATE_COLORS = {
@@ -31,6 +34,38 @@ class UserMessage(Static):
 
     def __init__(self, content: str, **kwargs) -> None:
         text = Text(content, style=USER_COLOR)
+        super().__init__(text, **kwargs)
+
+
+class ToolCallMessage(Static):
+    """A styled widget for displaying an MCP tool call inline in the chat.
+
+    Shows the tool name and a truncated one-line preview of its arguments,
+    so the user can actually see when the agent reaches out to an MCP server
+    mid-response (toast notifications are easy to miss).
+    """
+
+    _MAX_ARGS_CHARS = 120
+
+    def __init__(self, name: str, args: dict[str, Any], **kwargs) -> None:
+        args_str = json.dumps(args, ensure_ascii=False, sort_keys=True)
+        if len(args_str) > self._MAX_ARGS_CHARS:
+            args_str = args_str[: self._MAX_ARGS_CHARS - 1] + "…"
+        text = Text(f"\u26a1 {name}({args_str})", style=TOOL_CALL_COLOR)
+        super().__init__(text, **kwargs)
+
+
+class ThoughtMessage(Static):
+    """A styled widget for displaying a model reasoning/thought block.
+
+    Currently only Gemini emits these (via `GeminiClient.on_thought` when
+    `thinking_config.includeThoughts` is set). The widget renders the
+    thought text in dimmed italic so it visually recedes behind the actual
+    answer.
+    """
+
+    def __init__(self, content: str, **kwargs) -> None:
+        text = Text(f"\U0001f4ad {content}", style=f"italic {THOUGHT_COLOR}")
         super().__init__(text, **kwargs)
 
 
