@@ -21,8 +21,8 @@ nav = [
 
 [project.theme]
 
-logo = "static/logo.png"
-favicon = "static/logo.png"
+logo = "static/logo-hood.png"
+favicon = "static/favicon.png"
 features = [
   "navigation.sections",
   "navigation.top",
