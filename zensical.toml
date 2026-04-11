@@ -8,6 +8,7 @@ repo_url = "https://github.com/polarsen-io/padwan-cli"
 repo_name = "polarsen-io/padwan-cli"
 
 extra_css = ["stylesheets/extra.css"]
+extra_javascript = ["javascripts/mermaid.mjs"]
 
 nav = [
   { "Introduction" = "index.md" },
@@ -31,6 +32,10 @@ features = [
   "content.code.copy",
   "toc.integrate",
 ]
+
+[project.theme.font]
+text = "Inter"
+code = "JetBrains Mono"
 
 [[project.theme.palette]]
 media = "(prefers-color-scheme: light)"
@@ -66,6 +71,9 @@ pygments_lang_class = true
 [project.markdown_extensions.pymdownx.snippets]
 
 [project.markdown_extensions.pymdownx.superfences]
+custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" }
+]
 
 [project.markdown_extensions.pymdownx.tabbed]
 alternate_style = true
