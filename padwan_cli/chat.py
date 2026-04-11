@@ -77,12 +77,12 @@ def _format_tokens(session: AgentSession, ctx: TuiContext | None = None) -> str:
 
 @chat_group.command("send", help="Send a message to the LLM")
 async def chat_send_fn(
-        message: str = Option(..., help="Message to send"),
-        model: str = Option(
-            "gpt-4o-mini", "-m", "--model", help="Model to use", choices=ALL_MODELS
-        ),
-        session_id: str | None = Option(None, '--resume', help="Resume session"),
-        ctx: TuiContext = TuiOption(),
+    message: str = Option(..., help="Message to send"),
+    model: str = Option(
+        "gpt-4o-mini", "-m", "--model", help="Model to use", choices=ALL_MODELS
+    ),
+    session_id: str | None = Option(None, "--resume", help="Resume session"),
+    ctx: TuiContext = TuiOption(),
 ) -> None:
     """Start a conversation. Use Ctrl+C to exit."""
 
@@ -193,14 +193,14 @@ async def chat_send_fn(
 
 @chat_group.command("clear", help="Clear conversation history")
 async def chat_clear_fn(
-        model: str | None = Option(
-            None,
-            "-m",
-            "--model",
-            help="Model session to clear (all if omitted)",
-            choices=ALL_MODELS,
-        ),
-        ctx: TuiContext = TuiOption(),
+    model: str | None = Option(
+        None,
+        "-m",
+        "--model",
+        help="Model session to clear (all if omitted)",
+        choices=ALL_MODELS,
+    ),
+    ctx: TuiContext = TuiOption(),
 ) -> None:
     """Clear conversation history for a model or all models."""
     if model:

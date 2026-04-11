@@ -28,6 +28,7 @@ class WidgetApp(App):
 
 # UserMessage
 
+
 class TestUserMessage:
     async def test_renders_content(self):
         app = WidgetApp(lambda: UserMessage("Hello, world!"))
@@ -46,6 +47,7 @@ class TestUserMessage:
 
 
 # BatchProgressWidget
+
 
 class TestBatchProgressWidget:
     async def test_displays_state(self, make_job):
@@ -91,6 +93,7 @@ class TestBatchProgressWidget:
 
 
 # BatchResultWidget
+
 
 class TestBatchResultWidget:
     async def test_renders_result(self, make_result):

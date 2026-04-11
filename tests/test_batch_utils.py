@@ -61,10 +61,18 @@ class TestSaveResultsToFile:
     def results(self):
         return [
             BatchResult(
-                key="q1", content="Answer 1", input_tokens=10, output_tokens=20, total_tokens=30
+                key="q1",
+                content="Answer 1",
+                input_tokens=10,
+                output_tokens=20,
+                total_tokens=30,
             ),
             BatchResult(
-                key="q2", content="Answer 2", input_tokens=5, output_tokens=15, total_tokens=20
+                key="q2",
+                content="Answer 2",
+                input_tokens=5,
+                output_tokens=15,
+                total_tokens=20,
             ),
         ]
 

@@ -36,9 +36,7 @@ cli.add_command_group(chat_group)
 @cli.tui_on_ready
 def _tui_startup_hint() -> None:
     """Show a hint pointing new users at the command palette when the TUI opens."""
-    get_tui_context().set_hint(
-        "Type / to browse commands - e.g. /chat:send 'Hello'"
-    )
+    get_tui_context().set_hint("Type / to browse commands - e.g. /chat:send 'Hello'")
 
 
 @cli.command("models", help="List available models")
