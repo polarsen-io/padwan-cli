@@ -209,6 +209,7 @@ async def chat_send_fn(
                     if original_style:
                         ctx.set_prompt_style(original_style)
     except Exception as e:
+        console.print_exception(show_locals=False)
         console.print(f"[red]Chat session failed: {e}[/red]")
 
 
