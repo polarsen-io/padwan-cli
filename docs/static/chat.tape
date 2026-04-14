@@ -4,25 +4,19 @@
 Output docs/static/chat.gif
 
 Set Shell "zsh"
-Set FontSize 14
-Set Width 800
-Set Height 500
+Set FontSize 16
+Set Width 1000
+Set Height 600
 Set Theme "Catppuccin Mocha"
-Set TypingSpeed 50ms
+Set TypingSpeed 20ms
 
 Env PROMPT "$ "
 Env PS1 "$ "
 
-# Start the TUI and enter a chat session
-Type "uv run padwan-cli /chat:send 'Hello! What can you help me with?' -m gpt-4o-mini"
+# Start the TUI and enter a chat session with MCP tools
+Type "uv run padwan-cli  /chat:send 'Are French TGV trains on time?' -m magistral-medium-latest"
 Enter
-Sleep 5s
-
-# Follow-up message
-Type "Can you give me an example in Python?"
-Sleep 300ms
-Enter
-Sleep 5s
+Sleep 30s
 
 # Exit chat
 Ctrl+C

@@ -48,25 +48,38 @@ class ToolCallMessage(Static):
     _MAX_ARGS_CHARS = 120
 
     def __init__(self, name: str, args: dict[str, Any], **kwargs) -> None:
+        self._tool_name = name
         args_str = json.dumps(args, ensure_ascii=False, sort_keys=True)
         if len(args_str) > self._MAX_ARGS_CHARS:
             args_str = args_str[: self._MAX_ARGS_CHARS - 1] + "…"
+        self._args_str = args_str
         text = Text(f"\u26a1 {name}({args_str})", style=TOOL_CALL_COLOR)
         super().__init__(text, **kwargs)
+
+    def set_elapsed(self, seconds: float) -> None:
+        """Append elapsed time in dim style."""
+        text = Text()
+        text.append(f"\u26a1 {self._tool_name}({self._args_str})", style=TOOL_CALL_COLOR)
+        text.append(f"  {seconds:.1f}s", style="dim")
+        self.update(text)
 
 
 class ThoughtMessage(Static):
     """A styled widget for displaying a model reasoning/thought block.
 
-    Currently only Gemini emits these (via `GeminiClient.on_thought` when
-    `thinking_config.includeThoughts` is set). The widget renders the
-    thought text in dimmed italic so it visually recedes behind the actual
-    answer.
+    Providers stream reasoning/thoughts in small chunks. `append` grows the
+    widget in place so a continuous thought renders as one block instead
+    of one widget per chunk.
     """
 
-    def __init__(self, content: str, **kwargs) -> None:
-        text = Text(f"\U0001f4ad {content}", style=f"italic {THOUGHT_COLOR}")
-        super().__init__(text, **kwargs)
+    def __init__(self, content: str = "", **kwargs) -> None:
+        super().__init__(**kwargs)
+        self._text = content
+        self.update(Text(f"\U0001f4ad {self._text}", style=f"italic {THOUGHT_COLOR}"))
+
+    def append(self, text: str) -> None:
+        self._text += text
+        self.update(Text(f"\U0001f4ad {self._text}", style=f"italic {THOUGHT_COLOR}"))
 
 
 class StreamingMessage(_StreamingMessage):

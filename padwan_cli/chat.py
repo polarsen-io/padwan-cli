@@ -1,4 +1,6 @@
 import contextlib
+import time
+from contextlib import contextmanager
 from typing import Any
 
 from piou import Option, CommandGroup
@@ -12,6 +14,7 @@ from padwan_llm import (
     McpStreamable,
     McpTool,
     McpTransport,
+    ToolCallContext,
 )
 from padwan_llm.gemini import GeminiClient
 from padwan_llm.gemini.models import ThinkingConfig
@@ -82,6 +85,7 @@ async def chat_send_fn(
         "gpt-4o-mini", "-m", "--model", help="Model to use", choices=ALL_MODELS
     ),
     session_id: str | None = Option(None, "--resume", help="Resume session"),
+    max_tool_rounds: int = Option(20, '--max-tools-round', help='Maximum number of tool calls per round'),
     ctx: TuiContext = TuiOption(),
 ) -> None:
     """Start a conversation. Use Ctrl+C to exit."""
@@ -94,29 +98,45 @@ async def chat_send_fn(
     # that produced it. Resetting this flag on every event splits the text
     # into one widget per "section" with tool/thought widgets between them.
     needs_new_text_widget = True
+    # Consecutive thought chunks stream into the same widget; any non-thought
+    # event (tool call or text chunk) closes the current thought block so
+    # the next thought starts a fresh widget.
+    current_thought: ThoughtMessage | None = None
 
-    def _on_tool(name: str, args: dict[str, Any]) -> None:
-        nonlocal needs_new_text_widget
+    @contextmanager
+    def _on_tool(tc: ToolCallContext):
+        nonlocal needs_new_text_widget, current_thought
+        current_thought = None
         if ctx.is_tui:
-            ctx.mount_widget(ToolCallMessage(name, args))
+            widget = ToolCallMessage(tc.name, tc.args)
+            ctx.mount_widget(widget)
             needs_new_text_widget = True
+            t0 = time.perf_counter()
+            yield
+            widget.set_elapsed(time.perf_counter() - t0)
         else:
-            console.print(f"[dim]→ tool call: {name}({args})[/dim]")
+            console.print(f"[dim]→ tool call: {tc.name}({tc.args})[/dim]")
+            t0 = time.perf_counter()
+            yield
+            console.print(f"[dim]  ↳ {time.perf_counter() - t0:.1f}s[/dim]")
 
     def _on_thought(text: str) -> None:
-        nonlocal needs_new_text_widget
+        nonlocal needs_new_text_widget, current_thought
         if ctx.is_tui:
-            ctx.mount_widget(ThoughtMessage(text))
+            if current_thought is None:
+                current_thought = ThoughtMessage(text)
+                ctx.mount_widget(current_thought)
+            else:
+                current_thought.append(text)
             needs_new_text_widget = True
         else:
-            console.print(f"[dim italic]💭 {text}[/dim italic]")
+            console.print(f"[dim italic]💭 {text}[/dim italic]", end="")
 
     def _on_mcp_connect(transport: McpTransport) -> None:
-        label = getattr(transport, "url", None) or transport.auto_prefix
         if ctx.is_tui:
-            ctx.notify(str(label), title="MCP connected")
+            ctx.notify(transport.label, title="MCP connected")
         else:
-            console.print(f"[green]MCP connected[/green] [dim]{label}[/dim]")
+            console.print(f"[green]MCP connected[/green] [dim]{transport.label}[/dim]")
 
     try:
         client = LLMClient(model=model, on_thought=_on_thought)
@@ -135,7 +155,7 @@ async def chat_send_fn(
             on_mcp_connect=_on_mcp_connect,
             store=_store,
             session_id=session_id or model,
-            max_tool_rounds=5,
+            max_tool_rounds=max_tool_rounds,
         )
         async with session:
             user_input: str | None = message
@@ -157,6 +177,7 @@ async def chat_send_fn(
                                 widget = StreamingMessage()
                                 ctx.mount_widget(widget)
                                 needs_new_text_widget = False
+                                current_thought = None
                             assert widget is not None
                             widget.append(chunk)
                             if (n := ctx.pending_count) > 0:

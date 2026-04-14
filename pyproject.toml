@@ -24,6 +24,7 @@ module-root = ""
 
 [tool.uv.sources]
 padwan-llm = { path = "../padwan-llm", editable = true }
+piou = { path = "../../piou", editable = true }
 
 [dependency-groups]
 dev = [
