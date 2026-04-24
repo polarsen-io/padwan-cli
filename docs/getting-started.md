@@ -45,6 +45,14 @@ padwan-cli "Tell me a story" -m gpt-4o-mini --stream
 
 The default model is `gpt-4o-mini`. Use `-m` to pick any supported model.
 
+Point to a custom OpenAI-compatible endpoint with `--base-url`, and pass extra request parameters with `--extra-params`:
+
+```bash
+padwan-cli "Hello" --base-url http://localhost:8000/v1 --extra-params '{"temperature": 0}'
+```
+
+Use `--stream-thinking` (with `--stream`) to stream model reasoning tokens to stderr.
+
 ### List models
 
 See all models available across providers:

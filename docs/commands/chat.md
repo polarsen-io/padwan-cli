@@ -16,6 +16,10 @@ padwan-cli chat send "Hello, how are you?" -m gpt-4o-mini
 |---|---|---|
 | `MESSAGE` (positional) | *required* | The message to send |
 | `-m`, `--model` | `gpt-4o-mini` | Model to use |
+| `--base-url` | *none* | Custom OpenAI-compatible endpoint |
+| `--extra-params` | *none* | Extra JSON object merged into every request body |
+| `--resume` | *none* | Resume a previous session by ID |
+| `--max-tools-round` | `20` | Maximum number of tool calls per round |
 
 In TUI mode, the command enters an interactive loop — type follow-up messages and press Enter to continue the conversation. Press **Ctrl+C** to exit chat mode. Messages you type while the model is responding are queued and processed in order.
 

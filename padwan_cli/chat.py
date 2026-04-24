@@ -1,4 +1,5 @@
 import contextlib
+import json
 import time
 from contextlib import contextmanager
 from typing import Any
@@ -81,11 +82,15 @@ def _format_tokens(session: AgentSession, ctx: TuiContext | None = None) -> str:
 @chat_group.command("send", help="Send a message to the LLM")
 async def chat_send_fn(
     message: str = Option(..., help="Message to send"),
-    model: str = Option(
-        "gpt-4o-mini", "-m", "--model", help="Model to use", choices=ALL_MODELS
-    ),
+    model: str = Option("gpt-4o-mini", "-m", "--model", help="Model to use"),
     session_id: str | None = Option(None, "--resume", help="Resume session"),
     max_tool_rounds: int = Option(20, '--max-tools-round', help='Maximum number of tool calls per round'),
+    base_url: str | None = Option(None, "--base-url", help="Custom OpenAI-compatible endpoint"),
+    extra_params: str | None = Option(
+        None,
+        "--extra-params",
+        help="Extra JSON object merged into every request body (e.g. '{\"temperature\": 0}')",
+    ),
     ctx: TuiContext = TuiOption(),
 ) -> None:
     """Start a conversation. Use Ctrl+C to exit."""
@@ -138,8 +143,19 @@ async def chat_send_fn(
         else:
             console.print(f"[green]MCP connected[/green] [dim]{transport.label}[/dim]")
 
+    parsed_extra: dict[str, Any] | None = None
+    if extra_params is not None:
+        try:
+            parsed_extra = json.loads(extra_params)
+        except json.JSONDecodeError as e:
+            console.print(f"[red]--extra-params is not valid JSON: {e}[/red]")
+            return
+        if not isinstance(parsed_extra, dict):
+            console.print("[red]--extra-params must be a JSON object[/red]")
+            return
+
     try:
-        client = LLMClient(model=model, on_thought=_on_thought)
+        client = LLMClient(model=model, on_thought=_on_thought, base_url=base_url)
         if isinstance(client, GeminiClient):
             client.thinking_config = ThinkingConfig(includeThoughts=True)
 
@@ -156,6 +172,7 @@ async def chat_send_fn(
             store=_store,
             session_id=session_id or model,
             max_tool_rounds=max_tool_rounds,
+            extra_params=parsed_extra,
         )
         async with session:
             user_input: str | None = message
