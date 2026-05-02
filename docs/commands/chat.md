@@ -28,13 +28,23 @@ In CLI mode, the command sends a single message, prints the response, and exits.
 After each response, token usage is displayed:
 
 ```
-in: 42 out: 128 cached: 0 | session: 170
+in: 42 out: 128 cached: 0 | session: 170 | mcp: 1 | 2 queued
 ```
 
 - **in** — input tokens for the last request
 - **out** — output tokens for the last request
 - **cached** — cached tokens (if supported by the provider)
 - **session** — cumulative tokens across the conversation
+- **mcp** — number of connected MCP servers (only shown when > 0)
+- **queued** — messages typed while the model was responding, awaiting their turn (only shown when > 0)
+
+### Tools and MCP
+
+Each chat session auto-connects to a public, no-auth MCP server ([`mcp.data.gouv.fr`](https://mcp.data.gouv.fr/mcp)) so the model can call tools. When the connection comes up you'll see an `MCP connected` notification, and any tool calls render as their own widgets (with elapsed time) inline with the response.
+
+### Thinking tokens
+
+For Gemini models, the chat session enables `includeThoughts` so reasoning tokens stream into a separate "thought" widget above the answer. Other providers that emit reasoning chunks (e.g. via `--stream-thinking` on the one-shot path) behave the same way.
 
 ### Session persistence
 
