@@ -20,7 +20,7 @@ from padwan_llm._base import OnThought
 from padwan_llm.conversation import Message
 from padwan_llm.errors import Provider
 
-from .utils import ALL_MODELS, console
+from .utils import console
 from .batch import batch_group
 from .chat import chat_group
 
