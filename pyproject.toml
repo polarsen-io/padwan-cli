@@ -8,8 +8,8 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
-    "padwan-llm>=0.5.1",
-    "piou[tui]>=0.32.0",
+    "padwan-llm>=0.6.0",
+    "piou[tui]>=0.34.1",
 ]
 
 [project.scripts]
@@ -22,9 +22,8 @@ build-backend = "uv_build"
 [tool.uv.build-backend]
 module-root = ""
 
-[tool.uv.sources]
-padwan-llm = { path = "../padwan-llm", editable = true }
-piou = { path = "../../piou", editable = true }
+#[tool.uv.sources]
+#padwan-llm = { path = "../padwan-llm", editable = true }
 
 [dependency-groups]
 dev = [
