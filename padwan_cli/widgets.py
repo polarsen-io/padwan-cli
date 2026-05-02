@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+import json
+from typing import TYPE_CHECKING, Any, cast
 
 from rich.text import Text
 from textual.widgets import Static
@@ -13,6 +14,8 @@ if TYPE_CHECKING:
 # Colors for chat messages
 USER_COLOR = "#87ceeb"
 ASSISTANT_COLOR = "#98fb98"
+TOOL_CALL_COLOR = "#ffa500"
+THOUGHT_COLOR = "#9370db"
 
 # Colors for batch job states
 STATE_COLORS = {
@@ -32,6 +35,53 @@ class UserMessage(Static):
     def __init__(self, content: str, **kwargs) -> None:
         text = Text(content, style=USER_COLOR)
         super().__init__(text, **kwargs)
+
+
+class ToolCallMessage(Static):
+    """A styled widget for displaying an MCP tool call inline in the chat.
+
+    Shows the tool name and a truncated one-line preview of its arguments,
+    so the user can actually see when the agent reaches out to an MCP server
+    mid-response (toast notifications are easy to miss).
+    """
+
+    _MAX_ARGS_CHARS = 120
+
+    def __init__(self, name: str, args: dict[str, Any], **kwargs) -> None:
+        self._tool_name = name
+        args_str = json.dumps(args, ensure_ascii=False, sort_keys=True)
+        if len(args_str) > self._MAX_ARGS_CHARS:
+            args_str = args_str[: self._MAX_ARGS_CHARS - 1] + "…"
+        self._args_str = args_str
+        text = Text(f"\u26a1 {name}({args_str})", style=TOOL_CALL_COLOR)
+        super().__init__(text, **kwargs)
+
+    def set_elapsed(self, seconds: float) -> None:
+        """Append elapsed time in dim style."""
+        text = Text()
+        text.append(
+            f"\u26a1 {self._tool_name}({self._args_str})", style=TOOL_CALL_COLOR
+        )
+        text.append(f"  {seconds:.1f}s", style="dim")
+        self.update(text)
+
+
+class ThoughtMessage(Static):
+    """A styled widget for displaying a model reasoning/thought block.
+
+    Providers stream reasoning/thoughts in small chunks. `append` grows the
+    widget in place so a continuous thought renders as one block instead
+    of one widget per chunk.
+    """
+
+    def __init__(self, content: str = "", **kwargs) -> None:
+        super().__init__(**kwargs)
+        self._text = content
+        self.update(Text(f"\U0001f4ad {self._text}", style=f"italic {THOUGHT_COLOR}"))
+
+    def append(self, text: str) -> None:
+        self._text += text
+        self.update(Text(f"\U0001f4ad {self._text}", style=f"italic {THOUGHT_COLOR}"))
 
 
 class StreamingMessage(_StreamingMessage):
@@ -131,7 +181,7 @@ class BatchResultWidget(Static):
         for result in self._results:
             # Header with key and token info
             lines.append(
-                f"[cyan][{result.key}][/cyan] "
+                f"[cyan]\\[{result.key}][/cyan] "
                 f"[dim]({result.input_tokens} in, {result.output_tokens} out, "
                 f"{result.total_tokens} total tokens)[/dim]"
             )

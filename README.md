@@ -2,6 +2,9 @@
 
 Interactive CLI/TUI for [`padwan-llm`](https://github.com/polarsen-io/padwan-llm).
 
+> [!NOTE]
+> This is a playground for experimenting with `padwan-llm` features (streaming, agents, MCP, thinking tokens, batch jobs) — not a production-grade tool. Expect rough edges and breaking changes.
+
 <img alt="Chat demo" src="https://github.com/polarsen-io/padwan-cli/raw/master/docs/static/chat.gif" width="800"/>
 
 ## Quick start

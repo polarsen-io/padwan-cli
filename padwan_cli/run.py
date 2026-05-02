@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import json
 import sys
+from typing import Any
 
 from piou import Cli, Option
+from piou.tui import get_tui_context
 
 from rich.table import Table
 
@@ -13,10 +16,11 @@ from padwan_llm import (
     OPENAI_MODELS,
     LLMClient,
 )
+from padwan_llm._base import OnThought
 from padwan_llm.conversation import Message
 from padwan_llm.errors import Provider
 
-from .utils import ALL_MODELS, console
+from .utils import console
 from .batch import batch_group
 from .chat import chat_group
 
@@ -30,6 +34,12 @@ cli = Cli(description="Padwan CLI for the unified LLM client library")
 
 cli.add_command_group(batch_group)
 cli.add_command_group(chat_group)
+
+
+@cli.tui_on_ready
+def _tui_startup_hint() -> None:
+    """Show a hint pointing new users at the command palette when the TUI opens."""
+    get_tui_context().set_hint("Type / to browse commands - e.g. /chat:send 'Hello'")
 
 
 @cli.command("models", help="List available models")
@@ -88,17 +98,45 @@ def info() -> None:
 @cli.main(help="One-shot LLM query")
 async def oneshot(
     prompt: str = Option(..., help="Prompt to send"),
-    model: str = Option(
-        "gpt-4o-mini", "-m", "--model", help="Model to use", choices=ALL_MODELS
-    ),
+    model: str = Option("gpt-4o-mini", "-m", "--model", help="Model to use"),
     stream: bool = Option(False, "--stream", "-s", help="Stream output as it arrives"),
+    base_url: str | None = Option(
+        None, "--base-url", help="Custom OpenAI-compatible endpoint"
+    ),
+    extra_params: str | None = Option(
+        None,
+        "--extra-params",
+        help="Extra JSON object merged into the request body (e.g. '{\"temperature\": 0}')",
+    ),
+    stream_thinking: bool = Option(
+        False,
+        "--stream-thinking",
+        help="Stream model reasoning/thinking tokens to stderr (requires --stream)",
+    ),
 ) -> None:
     """Send a single prompt and print the response."""
-    client = LLMClient(model=model)
+    parsed_extra: dict[str, Any] | None = None
+    if extra_params is not None:
+        try:
+            parsed_extra = json.loads(extra_params)
+        except json.JSONDecodeError as e:
+            console.print(f"[red]--extra-params is not valid JSON: {e}[/red]")
+            raise SystemExit(1)
+        if not isinstance(parsed_extra, dict):
+            console.print("[red]--extra-params must be a JSON object[/red]")
+            raise SystemExit(1)
+
+    def _thought_streamer(chunk: str) -> None:
+        sys.stderr.write(chunk)
+        sys.stderr.flush()
+
+    on_thought: OnThought | None = _thought_streamer if stream_thinking else None
+
+    client = LLMClient(model=model, base_url=base_url, on_thought=on_thought)
     messages: list[Message] = [Message(role="user", content=prompt)]
     async with client:
         if stream:
-            async for chunk in client.stream_chat(messages):
+            async for chunk in client.stream_chat(messages, extra_params=parsed_extra):
                 sys.stdout.write(chunk)
                 sys.stdout.flush()
         else:

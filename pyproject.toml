@@ -8,8 +8,8 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
-    "padwan-llm>=0.1.0",
-    "piou[tui]>=0.32.0",
+    "padwan-llm>=0.6.0",
+    "piou[tui]>=0.34.1",
 ]
 
 [project.scripts]
@@ -22,18 +22,20 @@ build-backend = "uv_build"
 [tool.uv.build-backend]
 module-root = ""
 
-[tool.uv.sources]
-padwan-llm = { path = "../padwan-llm", editable = true }
+#[tool.uv.sources]
+#padwan-llm = { path = "../padwan-llm", editable = true }
 
 [dependency-groups]
 dev = [
     "piou[tui-reload]>=0.33.0",
+    "pyright>=1.1.408",
     "pytest>=8.0.0",
+    "pytest-asyncio>=1.3.0",
+    "pytest-cov>=7.0.0",
     "ruff>=0.11.0",
 ]
 docs = [
-    "mkdocs>=1.6.0",
-    "mkdocs-material>=9.5.0",
+    "zensical>=0.0.31",
 ]
 bump = [
     "commitizen>=4.0.0",
@@ -45,3 +47,6 @@ version_provider = "pep621"
 tag_format = "$version"
 update_changelog_on_bump = true
 bump_message = "chore(release): release $current_version → $new_version [skip ci]"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
