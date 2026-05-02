@@ -59,7 +59,9 @@ class ToolCallMessage(Static):
     def set_elapsed(self, seconds: float) -> None:
         """Append elapsed time in dim style."""
         text = Text()
-        text.append(f"\u26a1 {self._tool_name}({self._args_str})", style=TOOL_CALL_COLOR)
+        text.append(
+            f"\u26a1 {self._tool_name}({self._args_str})", style=TOOL_CALL_COLOR
+        )
         text.append(f"  {seconds:.1f}s", style="dim")
         self.update(text)
 

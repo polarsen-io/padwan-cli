@@ -84,8 +84,12 @@ async def chat_send_fn(
     message: str = Option(..., help="Message to send"),
     model: str = Option("gpt-4o-mini", "-m", "--model", help="Model to use"),
     session_id: str | None = Option(None, "--resume", help="Resume session"),
-    max_tool_rounds: int = Option(20, '--max-tools-round', help='Maximum number of tool calls per round'),
-    base_url: str | None = Option(None, "--base-url", help="Custom OpenAI-compatible endpoint"),
+    max_tool_rounds: int = Option(
+        20, "--max-tools-round", help="Maximum number of tool calls per round"
+    ),
+    base_url: str | None = Option(
+        None, "--base-url", help="Custom OpenAI-compatible endpoint"
+    ),
     extra_params: str | None = Option(
         None,
         "--extra-params",

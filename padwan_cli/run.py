@@ -100,7 +100,9 @@ async def oneshot(
     prompt: str = Option(..., help="Prompt to send"),
     model: str = Option("gpt-4o-mini", "-m", "--model", help="Model to use"),
     stream: bool = Option(False, "--stream", "-s", help="Stream output as it arrives"),
-    base_url: str | None = Option(None, "--base-url", help="Custom OpenAI-compatible endpoint"),
+    base_url: str | None = Option(
+        None, "--base-url", help="Custom OpenAI-compatible endpoint"
+    ),
     extra_params: str | None = Option(
         None,
         "--extra-params",
