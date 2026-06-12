@@ -45,7 +45,7 @@ Chat sessions run without tools by default. Pass `--mcp` with one or more stream
 
 ```bash
 # Single server (public, no-auth example)
-padwan-cli chat send "Quels jeux de données sur le vélo ?" --mcp https://mcp.data.gouv.fr/mcp
+padwan-cli chat send "Which datasets cover cycling?" --mcp https://mcp.data.gouv.fr/mcp
 
 # Multiple servers (space-separated)
 padwan-cli chat send "Hello" --mcp https://mcp.example.com/mcp https://mcp.data.gouv.fr/mcp
