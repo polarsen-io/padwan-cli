@@ -18,6 +18,7 @@ padwan-cli chat send "Hello, how are you?" -m gpt-4o-mini
 | `-m`, `--model` | `gpt-4o-mini` | Model to use |
 | `--base-url` | *none* | Custom OpenAI-compatible endpoint |
 | `--extra-params` | *none* | Extra JSON object merged into every request body |
+| `--mcp` | *none* | Streamable-HTTP MCP server URL(s) to expose as tools (space-separated) |
 | `--resume` | *none* | Resume a previous session by ID |
 | `--max-tools-round` | `20` | Maximum number of tool calls per round |
 
@@ -40,7 +41,21 @@ in: 42 out: 128 cached: 0 | session: 170 | mcp: 1 | 2 queued
 
 ### Tools and MCP
 
-Each chat session auto-connects to a public, no-auth MCP server ([`mcp.data.gouv.fr`](https://mcp.data.gouv.fr/mcp)) so the model can call tools. When the connection comes up you'll see an `MCP connected` notification, and any tool calls render as their own widgets (with elapsed time) inline with the response.
+Chat sessions run without tools by default. Pass `--mcp` with one or more streamable-HTTP MCP server URLs to expose their tools to the model:
+
+```bash
+# Single server (public, no-auth example)
+padwan-cli chat send "Which datasets cover cycling?" --mcp https://mcp.data.gouv.fr/mcp
+
+# Multiple servers (space-separated)
+padwan-cli chat send "Hello" --mcp https://mcp.example.com/mcp https://mcp.data.gouv.fr/mcp
+```
+
+When a connection comes up you'll see an `MCP connected` notification, and any tool calls render as their own widgets (with elapsed time) inline with the response.
+
+### Errors
+
+Failures during a response (bad endpoint, invalid API key, provider errors…) are shown inline as a `✖` message and the chat stays usable — fix the issue or just send the next message.
 
 ### Thinking tokens
 
