@@ -20,7 +20,13 @@ from padwan_llm import (
 from padwan_llm.gemini import GeminiClient
 from padwan_llm.gemini.models import ThinkingConfig
 from .utils import ALL_MODELS, console
-from .widgets import StreamingMessage, ThoughtMessage, ToolCallMessage, UserMessage
+from .widgets import (
+    ErrorMessage,
+    StreamingMessage,
+    ThoughtMessage,
+    ToolCallMessage,
+    UserMessage,
+)
 
 chat_group = CommandGroup(name="chat", help="Chat with an LLM")
 
@@ -94,6 +100,11 @@ async def chat_send_fn(
         None,
         "--extra-params",
         help="Extra JSON object merged into every request body (e.g. '{\"temperature\": 0}')",
+    ),
+    mcp_urls: list[str] | None = Option(
+        None,
+        "--mcp",
+        help=f"Streamable-HTTP MCP server URL(s) to expose as tools (e.g. {DATAGOUV_MCP_URL})",
     ),
     ctx: TuiContext = TuiOption(),
 ) -> None:
@@ -170,7 +181,7 @@ async def chat_send_fn(
         # the first turn under a new id lands in the store via `session.save()`.
         session = AgentSession.load(
             client=client,
-            mcp_tools=[McpStreamable(url=DATAGOUV_MCP_URL)],
+            mcp_tools=[McpStreamable(url=url) for url in mcp_urls or ()],
             on_tool=_on_tool,
             on_mcp_connect=_on_mcp_connect,
             store=_store,
@@ -193,23 +204,33 @@ async def chat_send_fn(
                         ctx.set_silent_queue(True)
                         needs_new_text_widget = True
                         widget: StreamingMessage | None = None
-                        async for chunk in session.stream(user_input):
-                            if needs_new_text_widget:
-                                widget = StreamingMessage()
-                                ctx.mount_widget(widget)
-                                needs_new_text_widget = False
-                                current_thought = None
-                            assert widget is not None
-                            widget.append(chunk)
-                            if (n := ctx.pending_count) > 0:
-                                ctx.set_hint(f"Responding... ({n} queued)")
+                        try:
+                            async for chunk in session.stream(user_input):
+                                if needs_new_text_widget or widget is None:
+                                    widget = StreamingMessage()
+                                    ctx.mount_widget(widget)
+                                    needs_new_text_widget = False
+                                    current_thought = None
+                                widget.append(chunk)
+                                if (n := ctx.pending_count) > 0:
+                                    ctx.set_hint(f"Responding... ({n} queued)")
+                        except Exception as e:
+                            # Surface the error inline: the outer handler is
+                            # only reached after session teardown, which can
+                            # hang on the MCP listener (see padwan-llm mcp.py).
+                            ctx.mount_widget(ErrorMessage(str(e)))
+                            needs_new_text_widget = True
                         ctx.set_silent_queue(False)
                         ctx.set_hint("Chat mode - press Ctrl+C to exit")
                         ctx.set_status_above(_format_tokens(session, ctx) or None)
                         user_input = await ctx.prompt()
                     else:
-                        async for chunk in session.stream(user_input):
-                            console.print(chunk, end="")
+                        try:
+                            async for chunk in session.stream(user_input):
+                                console.print(chunk, end="")
+                        except Exception as e:
+                            console.print(f"\n[red]✖ {e}[/red]")
+                            break
                         console.print()
                         if tokens := _format_tokens(session):
                             console.print(f"[dim]{tokens}[/dim]")

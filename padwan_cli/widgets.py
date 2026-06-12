@@ -16,6 +16,7 @@ USER_COLOR = "#87ceeb"
 ASSISTANT_COLOR = "#98fb98"
 TOOL_CALL_COLOR = "#ffa500"
 THOUGHT_COLOR = "#9370db"
+ERROR_COLOR = "#ff6b6b"
 
 # Colors for batch job states
 STATE_COLORS = {
@@ -64,6 +65,14 @@ class ToolCallMessage(Static):
         )
         text.append(f"  {seconds:.1f}s", style="dim")
         self.update(text)
+
+
+class ErrorMessage(Static):
+    """A styled widget for displaying an error inline in the chat."""
+
+    def __init__(self, content: str, **kwargs) -> None:
+        text = Text(f"✖ {content}", style=ERROR_COLOR)
+        super().__init__(text, **kwargs)
 
 
 class ThoughtMessage(Static):
