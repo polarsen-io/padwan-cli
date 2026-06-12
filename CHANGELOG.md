@@ -1,3 +1,9 @@
+## 0.4.0 (2026-06-12)
+
+### Feat
+
+- **chat**: surface streaming errors inline and make MCP opt-in
+
 ## 0.3.0 (2026-05-02)
 
 ### Feat
