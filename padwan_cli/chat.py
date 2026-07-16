@@ -1,5 +1,7 @@
 import contextlib
 import json
+import mimetypes
+import os
 import time
 from contextlib import contextmanager
 from typing import Any
@@ -10,22 +12,30 @@ from textual.css.query import NoMatches
 
 from padwan_llm import (
     AgentSession,
+    ContentPart,
     ConversationSnapshot,
     LLMClient,
     McpStreamable,
     McpTool,
     McpTransport,
     ToolCallContext,
+    image_part,
+    supports_vision,
+    text_file_part,
+    text_part,
 )
 from padwan_llm.gemini import GeminiClient
 from padwan_llm.gemini.models import ThinkingConfig
 from .utils import ALL_MODELS, console
 from .widgets import (
+    Attachment,
+    AttachmentBadge,
     ErrorMessage,
     StreamingMessage,
     ThoughtMessage,
     ToolCallMessage,
     UserMessage,
+    render_attachments,
 )
 
 chat_group = CommandGroup(name="chat", help="Chat with an LLM")
@@ -83,6 +93,33 @@ def _format_tokens(session: AgentSession, ctx: TuiContext | None = None) -> str:
     if ctx and ctx.pending_count > 0:
         parts.append(f"| {ctx.pending_count} queued")
     return " ".join(parts)
+
+
+def _build_user_content(
+    text: str, attachments: list[Attachment]
+) -> str | list[ContentPart]:
+    """Assemble the user turn from typed text and queued attachments.
+
+    Returns the plain string when nothing is attached. Otherwise builds content
+    parts: the text, each text file inlined, and each supported image as a data
+    URL. Unsupported images (text-only model) and unreadable files are dropped
+    from the payload — they still appear in the sent badge.
+    """
+    if not attachments:
+        return text
+    parts: list[ContentPart] = []
+    if text:
+        parts.append(text_part(text))
+    for a in attachments:
+        if a.is_image:
+            if a.supported:
+                parts.append(image_part(a.path))
+        else:
+            try:
+                parts.append(text_file_part(a.path))
+            except (OSError, UnicodeDecodeError):
+                continue
+    return parts
 
 
 @chat_group.command("send", help="Send a message to the LLM")
@@ -196,16 +233,80 @@ async def chat_send_fn(
             ctx.set_rule_above(add_class="chat-mode")
             ctx.set_rule_below(add_class="chat-mode")
 
+            # Files dropped onto the terminal arrive as a paste of their path(s);
+            # queue them here and send with the next typed message.
+            pending: list[Attachment] = []
+
+            def _set_attach_warning(on: bool) -> None:
+                """Turn the input bars amber (or back to chat-mode cyan)."""
+                add, remove = (
+                    ("attach-warning", "chat-mode")
+                    if on
+                    else ("chat-mode", "attach-warning")
+                )
+                ctx.set_rule_above(add_class=add, remove_class=remove)
+                ctx.set_rule_below(add_class=add, remove_class=remove)
+
+            def _on_drop(paths: list[str]) -> None:
+                for p in paths:
+                    try:
+                        size = os.path.getsize(p)
+                    except OSError:
+                        continue
+                    is_image = (mimetypes.guess_type(p)[0] or "").startswith("image/")
+                    pending.append(
+                        Attachment(
+                            path=p,
+                            name=os.path.basename(p),
+                            size=size,
+                            is_image=is_image,
+                            supported=(not is_image) or supports_vision(model),
+                        )
+                    )
+                blind = [a for a in pending if a.is_image and not a.supported]
+                warning = (
+                    f"{model} can't read images — {len(blind)} will be skipped"
+                    if blind
+                    else None
+                )
+                ctx.set_attachments(render_attachments(pending, warning=warning))
+                _set_attach_warning(bool(blind))
+                ctx.set_hint(
+                    f"{len(pending)} attached — type a message · Ctrl+U clears"
+                )
+
+            def _on_clear() -> None:
+                pending.clear()
+                ctx.set_attachments(None)
+                _set_attach_warning(False)
+                ctx.set_hint("Chat mode - press Ctrl+C to exit")
+
+            ctx.register_paste_handler(_on_drop)
+            ctx.register_attachment_clear(_on_clear)
+
             try:
                 while user_input:
                     if ctx.is_tui:
+                        sent = list(pending)
                         ctx.mount_widget(UserMessage(user_input))
+                        if sent:
+                            skipped = [a for a in sent if a.is_image and not a.supported]
+                            badge_warning = (
+                                f"{model} can't read images — {len(skipped)} skipped"
+                                if skipped
+                                else None
+                            )
+                            ctx.mount_widget(AttachmentBadge(sent, warning=badge_warning))
+                        content = _build_user_content(user_input, sent)
+                        pending.clear()
+                        ctx.set_attachments(None)
+                        _set_attach_warning(False)
                         ctx.set_hint("Responding...")
                         ctx.set_silent_queue(True)
                         needs_new_text_widget = True
                         widget: StreamingMessage | None = None
                         try:
-                            async for chunk in session.stream(user_input):
+                            async for chunk in session.stream(content):
                                 if needs_new_text_widget or widget is None:
                                     widget = StreamingMessage()
                                     ctx.mount_widget(widget)
@@ -237,6 +338,8 @@ async def chat_send_fn(
                         break
             finally:
                 session.save()
+                ctx.register_paste_handler(None)
+                ctx.register_attachment_clear(None)
                 # Cleanup is best-effort — on a double-Ctrl+C the TUI screen
                 # is already tearing down, so query_one("#status-above") and
                 # friends raise NoMatches. Don't surface that as a misleading
@@ -245,9 +348,12 @@ async def chat_send_fn(
                     ctx.set_silent_queue(False)
                     ctx.clear_queue()  # Discard any messages typed during streaming
                     ctx.set_status_above(None)
+                    ctx.set_attachments(None)
                     ctx.set_hint(None)
                     ctx.set_rule_above(remove_class="chat-mode")
                     ctx.set_rule_below(remove_class="chat-mode")
+                    ctx.set_rule_above(remove_class="attach-warning")
+                    ctx.set_rule_below(remove_class="attach-warning")
                     if original_style:
                         ctx.set_prompt_style(original_style)
     except Exception as e:

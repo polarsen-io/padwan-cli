@@ -8,12 +8,17 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
-    "padwan-llm>=0.6.0",
+    "padwan-llm[realtime]>=0.6.0",
     "piou[tui]>=0.34.1",
 ]
 
+[project.optional-dependencies]
+# `talk` command audio I/O; also needs the PortAudio system lib (libportaudio2).
+voice = ["sounddevice>=0.5"]
+
 [project.scripts]
 padwan-cli = "padwan_cli:main_tui"
+padwan-talk = "padwan_cli.talk:main"
 
 [build-system]
 requires = ["uv_build>=0.9.28,<0.10.0"]
@@ -22,8 +27,11 @@ build-backend = "uv_build"
 [tool.uv.build-backend]
 module-root = ""
 
-#[tool.uv.sources]
-#padwan-llm = { path = "../padwan-llm", editable = true }
+# Local editable sources for in-progress drag-and-drop work (padwan-llm content
+# parts/vision + piou paste hook). Remove once both are published and pins bumped.
+[tool.uv.sources]
+padwan-llm = { path = "../padwan-llm", editable = true }
+piou = { path = "../../piou", editable = true }
 
 [dependency-groups]
 dev = [
