@@ -1,21 +1,6 @@
 import pytest
 
-from padwan_cli.talk import build_tutor_prompt, load_api_key
-
-
-@pytest.mark.parametrize(
-    "language, level",
-    [
-        pytest.param("Italian", "beginner (A1-A2)", id="italian-beginner"),
-        pytest.param("Spanish", "advanced (C1)", id="spanish-advanced"),
-    ],
-)
-def test_build_tutor_prompt_mentions_language_and_level(language, level) -> None:
-    prompt = build_tutor_prompt(language, level)
-    assert language in prompt
-    assert level in prompt
-    # The persona must instruct the model to actually speak the target language.
-    assert f"Talk almost entirely in {language}" in prompt
+from padwan_cli.talk import load_api_key
 
 
 def test_load_api_key_prefers_environment(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -51,8 +36,6 @@ async def test_talk_command_refuses_tui(monkeypatch: pytest.MonkeyPatch) -> None
     monkeypatch.setattr(talk, "_import_sounddevice", _boom)
     # The guard must return early, before importing sounddevice or opening a session.
     result = await talk.talk_command(
-        language="Italian",
-        level="x",
         voice="marin",
         model="gpt-realtime",
         instructions=None,

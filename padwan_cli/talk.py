@@ -43,23 +43,9 @@ _ENV_FILES = (
 )
 
 
-def build_tutor_prompt(language: str, level: str) -> str:
-    """Build the system prompt for a spoken-language tutor."""
-    return f"""You are a warm and patient {language} conversation tutor.
-The student's level is {level} and their native language is English.
-
-How you speak:
-- Talk almost entirely in {language}, but keep it simple and slow, matched to
-  the student's level. Drop to short English asides only to unblock them.
-- Keep each turn short (one or two sentences) so it stays a real back-and-forth.
-- Always end your turn with a question or a small prompt that invites them to
-  speak, so the conversation keeps flowing.
-- When the student makes a meaningful mistake, gently restate the correct form
-  once and move on — do not interrupt the flow with long grammar lectures.
-- Be encouraging and celebrate small wins.
-
-Start by warmly greeting the student in {language} and asking an easy opening
-question (their name, their day, what they like)."""
+_DEFAULT_INSTRUCTIONS = """You are a friendly voice assistant.
+Keep spoken replies brief and conversational — one or two sentences — so the
+exchange stays a real back-and-forth."""
 
 
 def load_api_key() -> str | None:
@@ -144,19 +130,19 @@ async def _handle_events(
 ) -> None:
     """Consume server events: play audio, stream transcripts, prompt for the turn.
 
-    Your own transcript arrives asynchronously and usually after the tutor has
-    started answering, so tutor text is held until the "you:" line has printed
+    Your own transcript arrives asynchronously and usually after the assistant has
+    started answering, so assistant text is held until the "you:" line has printed
     (flushed unconditionally on response.done so nothing is ever lost).
     """
-    speaking = False  # is the tutor mid-utterance on this line?
-    held: list[str] = []  # tutor transcript held until the "you:" line prints
+    speaking = False  # is the assistant mid-utterance on this line?
+    held: list[str] = []  # assistant transcript held until the "you:" line prints
     user_shown = True  # has the current turn's input transcript been printed?
     prepaid = False  # input transcript arrived before its response was created
 
     def flush_held() -> None:
         nonlocal speaking
         if held:
-            console.print("[cyan]tutor:[/cyan] ", end="")
+            console.print("[cyan]assistant:[/cyan] ", end="")
             sys.stdout.write("".join(held))
             sys.stdout.flush()
             held.clear()
@@ -173,7 +159,7 @@ async def _handle_events(
                 held.append(delta)
                 continue
             if not speaking:
-                console.print("[cyan]tutor:[/cyan] ", end="")
+                console.print("[cyan]assistant:[/cyan] ", end="")
                 speaking = True
             sys.stdout.write(delta)
             sys.stdout.flush()
@@ -183,7 +169,7 @@ async def _handle_events(
             else:
                 user_shown = False
         elif kind == RealtimeServerEvent.SPEECH_STARTED:  # hands-free VAD only
-            speaker.clear()  # barge-in: drop queued tutor audio
+            speaker.clear()  # barge-in: drop queued assistant audio
             flush_held()
             if speaking:
                 sys.stdout.write("\n")
@@ -201,7 +187,7 @@ async def _handle_events(
                 user_shown = True
                 flush_held()
         elif kind == RealtimeServerEvent.RESPONSE_DONE:
-            flush_held()  # transcript never arrived; don't lose the tutor text
+            flush_held()  # transcript never arrived; don't lose the assistant text
             user_shown = True
             if speaking:
                 sys.stdout.write("\n")
@@ -271,7 +257,7 @@ async def _converse(
         nonlocal turn_started_at, sent_bytes
         with mic_q.mutex:
             mic_q.queue.clear()  # drop audio captured before the press
-        speaker.clear()  # stop the tutor if it was still talking
+        speaker.clear()  # stop the assistant if it was still talking
         await conn.send_event({"type": "input_audio_buffer.clear"})
         recording.set()
         turn_started_at = loop.time()
@@ -344,14 +330,10 @@ async def _converse(
 
 
 async def talk_command(
-    language: str = Option("Italian", "-l", "--language", help="Language to practise"),
-    level: str = Option(
-        "beginner (A1-A2)", "--level", help="Student level woven into the persona"
-    ),
     voice: str = Option("marin", "--voice", help="Realtime voice (marin, cedar, …)"),
     model: str = Option("gpt-realtime", "-m", "--model", help="Realtime model"),
     instructions: str | None = Option(
-        None, "--instructions", help="Override the tutor persona entirely"
+        None, "--instructions", help="System prompt for the voice assistant"
     ),
     hands_free: bool = Option(
         False, "--hands-free", help="Auto voice detection instead of push-to-talk"
@@ -360,7 +342,7 @@ async def talk_command(
         False, "--check", help="List audio devices and key status, then exit"
     ),
 ) -> None:
-    """Speak with a real-time voice tutor (speech-to-speech) to practise a language."""
+    """Talk with a real-time voice assistant (speech-to-speech)."""
     # A live mic/speaker session needs the whole terminal; the Textual TUI owns it,
     # so this command only works headless. Fail loudly instead of hanging silently.
     if get_tui_context().is_tui:
@@ -379,7 +361,7 @@ async def talk_command(
         console.print(
             f"OPENAI_API_KEY: {'found' if load_api_key() else '[red]MISSING[/red]'}"
         )
-        console.print(f"model={model}  voice={voice}  language={language}")
+        console.print(f"model={model}  voice={voice}")
         return
 
     if not load_api_key():
@@ -396,7 +378,7 @@ async def talk_command(
         )
         push_to_talk = False
 
-    prompt = instructions or build_tutor_prompt(language, level)
+    prompt = instructions or _DEFAULT_INSTRUCTIONS
     speaker = Speaker(sd)
     # Push-to-talk disables server VAD so we commit each turn ourselves.
     turn_detection = NO_TURN_DETECTION if push_to_talk else None
@@ -421,19 +403,19 @@ async def talk_command(
                     )
                 else:
                     console.print(
-                        "[green]Parla pure![/green] [dim](hands-free — just speak. "
+                        "[green]Go ahead.[/green] [dim](hands-free — just speak. "
                         "Ctrl-C to quit.)[/dim]\n"
                     )
                 await _converse(conn, sd, speaker, push_to_talk=push_to_talk)
     except asyncio.CancelledError:
-        console.print("\n[dim]Ciao! 👋[/dim]")
+        console.print("\n[dim]Bye! 👋[/dim]")
     finally:
         if task is not None:
             loop.remove_signal_handler(signal.SIGINT)
 
 
 def main() -> None:
-    """Headless entry point (`padwan-talk`): run the voice tutor without the TUI."""
+    """Headless entry point (`padwan-talk`): run the voice chat without the TUI."""
     # Deferred import avoids a circular import (run imports talk at module load).
     from .run import cli
 
