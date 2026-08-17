@@ -30,6 +30,12 @@ CHANNELS = 1
 DTYPE = "int16"
 BLOCK = 1200  # 50 ms frames
 
+# Terminals report no key-release: a held Space arrives as auto-repeated spaces.
+# A gap longer than the keyboard's initial repeat delay (~0.66 s default) means
+# the key was released; shorter turns are discarded as accidental taps.
+_HOLD_RELEASE_GAP = 0.8
+_MIN_TURN_SECS = 0.45
+
 # Looked up for OPENAI_API_KEY when it is not already exported.
 _ENV_FILES = (
     Path.cwd() / ".env",
@@ -163,7 +169,7 @@ async def _handle_events(
                 sys.stdout.write("\n")
                 speaking = False
             if push_to_talk:
-                console.print("[dim]· tap Space to talk[/dim]")
+                console.print("[dim]· hold Space to talk[/dim]")
         elif kind == RealtimeServerEvent.ERROR:
             console.print(f"\n[dim][error] {event.get('error')}[/dim]")
 
@@ -201,37 +207,61 @@ async def _converse(
                 continue
             await conn.append_audio(chunk)
 
+    turn_task: asyncio.Task | None = None
+    last_space = 0.0
+    turn_started_at = 0.0
+
     async def start_turn() -> None:
+        nonlocal turn_started_at
         with mic_q.mutex:
             mic_q.queue.clear()  # drop audio captured before the press
         speaker.clear()  # stop the tutor if it was still talking
         await conn.send_event({"type": "input_audio_buffer.clear"})
         recording.set()
-        console.print("[red]● recording…[/red] [dim]Space to send[/dim]")
+        turn_started_at = loop.time()
+        console.print("[red]● recording…[/red] [dim]release Space to send[/dim]")
 
     async def end_turn() -> None:
         recording.clear()
         await asyncio.sleep(0.15)  # let the last queued chunks reach the socket
+        if loop.time() - turn_started_at < _MIN_TURN_SECS:
+            await conn.send_event({"type": "input_audio_buffer.clear"})
+            console.print("[dim](too short — hold Space while speaking)[/dim]")
+            return
         await conn.commit_audio()
         await conn.create_response()
 
-    turn_task: asyncio.Task | None = None
+    def _spawn_turn(coro_fn) -> None:
+        nonlocal turn_task
+        if turn_task is not None and not turn_task.done():
+            return  # previous transition still in flight
+        turn_task = asyncio.create_task(coro_fn())
 
     def on_key() -> None:  # called by the event loop when stdin is readable
-        nonlocal turn_task
+        nonlocal last_space
         try:
             data = os.read(sys.stdin.fileno(), 1)
         except OSError:
             return
-        if data in (b" ", b"\r", b"\n"):
-            if turn_task is not None and not turn_task.done():
-                return  # previous toggle still in flight; ignore the press
-            coro = end_turn() if recording.is_set() else start_turn()
-            turn_task = asyncio.create_task(coro)
+        if data == b" ":
+            # Held Space shows up as auto-repeated spaces; each one refreshes
+            # the hold. The release watcher ends the turn once they stop.
+            last_space = loop.time()
+            if not recording.is_set():
+                _spawn_turn(start_turn)
+        elif data in (b"\r", b"\n") and recording.is_set():
+            _spawn_turn(end_turn)  # manual send fallback
+
+    async def watch_release() -> None:
+        while True:
+            await asyncio.sleep(0.1)
+            if recording.is_set() and loop.time() - last_space > _HOLD_RELEASE_GAP:
+                _spawn_turn(end_turn)
 
     use_keys = push_to_talk and sys.stdin.isatty()
     with mic:
         sender = asyncio.create_task(pump_mic())
+        watcher = asyncio.create_task(watch_release()) if use_keys else None
         fd = sys.stdin.fileno()
         try:
             if use_keys:
@@ -245,6 +275,8 @@ async def _converse(
                 await _handle_events(conn, speaker, push_to_talk=False)
         finally:
             sender.cancel()
+            if watcher is not None:
+                watcher.cancel()
             if turn_task is not None:
                 turn_task.cancel()
 
@@ -322,8 +354,8 @@ async def talk_command(
             with speaker.stream:
                 if push_to_talk:
                     console.print(
-                        "[green]Ready.[/green] [dim]Tap Space to talk, Space again "
-                        "to send. Ctrl-C to quit.[/dim]\n"
+                        "[green]Ready.[/green] [dim]Hold Space while talking, "
+                        "release to send. Ctrl-C to quit.[/dim]\n"
                     )
                 else:
                     console.print(
