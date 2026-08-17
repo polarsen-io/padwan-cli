@@ -5,6 +5,10 @@ set dotenv-load
 default:
     @just --list
 
+# Interactive chat in the terminal (.env keys loaded automatically)
+chat *args:
+    uv run python -m padwan_cli chat start {{ args }}
+
 # Run unit tests
 [group('dev')]
 test *args:
