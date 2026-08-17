@@ -379,16 +379,16 @@ wheels = [
 
 [[package]]
 name = "niquests"
-version = "3.18.7"
+version = "3.21.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "charset-normalizer" },
     { name = "urllib3-future" },
     { name = "wassima", marker = "sys_platform != 'emscripten'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fb/1d/b40f0c7d62e3543483a8be5c74f9235cf70540fb1ba3480a33a1e8d6cdd6/niquests-3.18.7.tar.gz", hash = "sha256:7587a20e5c0fba0f2474d06b1f95794310585ba3a90e509c9a41f817100011e4", size = 1025148, upload-time = "2026-04-28T05:29:46.076Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/03/1c/836ad34fb18fac781722019100e2bffd81eb9a0011d7a91c434a7094460d/niquests-3.21.0.tar.gz", hash = "sha256:5b7d10a05f4c7ed08cede0af74f492ae7a8a5a71291833d029e23365fc3ea80a", size = 1070211, upload-time = "2026-07-29T10:26:24.993Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f6/0e/840094cf85a375533e0a25e7a6adb88eeb8dc557895f631a8938913c09bf/niquests-3.18.7-py3-none-any.whl", hash = "sha256:6126e20bd5b09d5deaa2c20634e4d9c1c0d0112aaa92cb24be56d6a858b22daa", size = 208486, upload-time = "2026-04-28T05:29:44.535Z" },
+    { url = "https://files.pythonhosted.org/packages/23/9b/c08403f905f9aaffc74b483fbb0ad4cc372d1da22cccb4ca771a3e65a185/niquests-3.21.0-py3-none-any.whl", hash = "sha256:dbea441b9e9d5d755e02caa2b57b94cdb97b23d754ead21b80a4ac18ef66805f", size = 230382, upload-time = "2026-07-29T10:26:23.194Z" },
 ]
 
 [package.optional-dependencies]
@@ -481,8 +481,8 @@ realtime = [
 
 [package.metadata]
 requires-dist = [
-    { name = "niquests", specifier = ">=3.18.5" },
-    { name = "niquests", extras = ["ws"], marker = "extra == 'realtime'", specifier = ">=3.18.5" },
+    { name = "niquests", specifier = ">=3.21.0" },
+    { name = "niquests", extras = ["ws"], marker = "extra == 'realtime'", specifier = ">=3.21.0" },
     { name = "qh3", specifier = ">=1.7.1" },
     { name = "typing-extensions", marker = "python_full_version < '3.14'", specifier = ">=4.10" },
     { name = "urllib3-future", specifier = ">=2.19.908" },
@@ -492,6 +492,7 @@ provides-extras = ["realtime"]
 [package.metadata.requires-dev]
 bump = [{ name = "commitizen", specifier = ">=4.0.0" }]
 dev = [
+    { name = "anthropic", specifier = ">=0.116.0" },
     { name = "prek", specifier = ">=0.2.30" },
     { name = "pyright", specifier = ">=1.1.400" },
     { name = "pytest", specifier = ">=8.0.0" },
@@ -503,7 +504,7 @@ dev = [
 docs = [{ name = "zensical", specifier = ">=0.0.31" }]
 llms = [
     { name = "google-genai", specifier = ">=2.1.0" },
-    { name = "mcp", specifier = ">=1.27.1" },
+    { name = "mcp", specifier = ">=2.0.0" },
     { name = "openai", specifier = ">=2.36.0" },
     { name = "xai-sdk", specifier = ">=1.12.2" },
 ]

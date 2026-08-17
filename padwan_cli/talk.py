@@ -142,29 +142,67 @@ def _cbreak(fd: int):
 async def _handle_events(
     conn: RealtimeConnection, speaker: Speaker, *, push_to_talk: bool
 ) -> None:
-    """Consume server events: play audio, stream transcripts, prompt for the turn."""
+    """Consume server events: play audio, stream transcripts, prompt for the turn.
+
+    Your own transcript arrives asynchronously and usually after the tutor has
+    started answering, so tutor text is held until the "you:" line has printed
+    (flushed unconditionally on response.done so nothing is ever lost).
+    """
     speaking = False  # is the tutor mid-utterance on this line?
+    held: list[str] = []  # tutor transcript held until the "you:" line prints
+    user_shown = True  # has the current turn's input transcript been printed?
+    prepaid = False  # input transcript arrived before its response was created
+
+    def flush_held() -> None:
+        nonlocal speaking
+        if held:
+            console.print("[cyan]tutor:[/cyan] ", end="")
+            sys.stdout.write("".join(held))
+            sys.stdout.flush()
+            held.clear()
+            speaking = True
+
     async for event in conn:
         kind = event.get("type")
         if kind == RealtimeServerEvent.AUDIO_DELTA:
             if pcm := conn.audio_delta_bytes(event):
                 speaker.play(pcm)
         elif kind == RealtimeServerEvent.AUDIO_TRANSCRIPT_DELTA:
+            delta = event.get("delta", "")
+            if not user_shown:
+                held.append(delta)
+                continue
             if not speaking:
                 console.print("[cyan]tutor:[/cyan] ", end="")
                 speaking = True
-            sys.stdout.write(event.get("delta", ""))
+            sys.stdout.write(delta)
             sys.stdout.flush()
+        elif kind == RealtimeServerEvent.RESPONSE_CREATED:
+            if prepaid:
+                prepaid = False  # transcript already printed for this turn
+            else:
+                user_shown = False
         elif kind == RealtimeServerEvent.SPEECH_STARTED:  # hands-free VAD only
             speaker.clear()  # barge-in: drop queued tutor audio
+            flush_held()
             if speaking:
                 sys.stdout.write("\n")
                 speaking = False
         elif kind == RealtimeServerEvent.INPUT_TRANSCRIPT_COMPLETED:
             text = (event.get("transcript") or "").strip()
+            if speaking:
+                sys.stdout.write("\n")
+                speaking = False
             if text:
                 console.print(f"[green]you:[/green] {text}")
+            if user_shown:
+                prepaid = True  # transcript beat its response.created
+            else:
+                user_shown = True
+                flush_held()
         elif kind == RealtimeServerEvent.RESPONSE_DONE:
+            flush_held()  # transcript never arrived; don't lose the tutor text
+            user_shown = True
             if speaking:
                 sys.stdout.write("\n")
                 speaking = False
