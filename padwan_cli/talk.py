@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import functools
 import os
 import queue
+import signal
 import sys
 import termios
 import threading
@@ -189,8 +191,14 @@ async def _converse(
     )
 
     async def pump_mic() -> None:
+        # Timed get so the executor thread exits shortly after cancellation
+        # instead of blocking threading shutdown at exit.
+        blocking_get = functools.partial(mic_q.get, True, 0.25)
         while True:
-            chunk = await loop.run_in_executor(None, mic_q.get)
+            try:
+                chunk = await loop.run_in_executor(None, blocking_get)
+            except queue.Empty:
+                continue
             await conn.append_audio(chunk)
 
     async def start_turn() -> None:
@@ -207,14 +215,19 @@ async def _converse(
         await conn.commit_audio()
         await conn.create_response()
 
+    turn_task: asyncio.Task | None = None
+
     def on_key() -> None:  # called by the event loop when stdin is readable
+        nonlocal turn_task
         try:
             data = os.read(sys.stdin.fileno(), 1)
         except OSError:
             return
         if data in (b" ", b"\r", b"\n"):
+            if turn_task is not None and not turn_task.done():
+                return  # previous toggle still in flight; ignore the press
             coro = end_turn() if recording.is_set() else start_turn()
-            asyncio.create_task(coro)
+            turn_task = asyncio.create_task(coro)
 
     use_keys = push_to_talk and sys.stdin.isatty()
     with mic:
@@ -232,6 +245,8 @@ async def _converse(
                 await _handle_events(conn, speaker, push_to_talk=False)
         finally:
             sender.cancel()
+            if turn_task is not None:
+                turn_task.cancel()
 
 
 async def talk_command(
@@ -294,24 +309,33 @@ async def talk_command(
 
     client = RealtimeClient(model=model)
     console.print(f"[dim]connecting to {model} (voice: {voice})…[/dim]")
-    async with client.connect(
-        instructions=prompt, voice=voice, turn_detection=turn_detection
-    ) as conn:
-        with speaker.stream:
-            if push_to_talk:
-                console.print(
-                    "[green]Ready.[/green] [dim]Tap Space to talk, Space again to "
-                    "send. Ctrl-C to quit.[/dim]\n"
-                )
-            else:
-                console.print(
-                    "[green]Parla pure![/green] [dim](hands-free — just speak. "
-                    "Ctrl-C to quit.)[/dim]\n"
-                )
-            try:
+    # Route Ctrl-C through task cancellation: a raw KeyboardInterrupt tears the
+    # loop down without unwinding connect()/mic/speaker, leaking pending tasks.
+    loop = asyncio.get_running_loop()
+    task = asyncio.current_task()
+    if task is not None:
+        loop.add_signal_handler(signal.SIGINT, task.cancel)
+    try:
+        async with client.connect(
+            instructions=prompt, voice=voice, turn_detection=turn_detection
+        ) as conn:
+            with speaker.stream:
+                if push_to_talk:
+                    console.print(
+                        "[green]Ready.[/green] [dim]Tap Space to talk, Space again "
+                        "to send. Ctrl-C to quit.[/dim]\n"
+                    )
+                else:
+                    console.print(
+                        "[green]Parla pure![/green] [dim](hands-free — just speak. "
+                        "Ctrl-C to quit.)[/dim]\n"
+                    )
                 await _converse(conn, sd, speaker, push_to_talk=push_to_talk)
-            except KeyboardInterrupt:
-                console.print("\n[dim]Ciao! 👋[/dim]")
+    except asyncio.CancelledError:
+        console.print("\n[dim]Ciao! 👋[/dim]")
+    finally:
+        if task is not None:
+            loop.remove_signal_handler(signal.SIGINT)
 
 
 def main() -> None:
