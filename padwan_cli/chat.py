@@ -1,10 +1,7 @@
-import asyncio
 import contextlib
 import json
 import mimetypes
 import os
-import signal
-import sys
 import time
 from contextlib import contextmanager
 from typing import Any
@@ -138,116 +135,6 @@ def _parse_extra_params(raw: str | None) -> tuple[dict[str, Any] | None, bool]:
         console.print("[red]--extra-params must be a JSON object[/red]")
         return None, False
     return parsed, True
-
-
-@contextmanager
-def _console_tool(tc: ToolCallContext):
-    console.print(f"[dim]→ tool call: {tc.name}({tc.args})[/dim]")
-    t0 = time.perf_counter()
-    yield
-    console.print(f"[dim]  ↳ {time.perf_counter() - t0:.1f}s[/dim]")
-
-
-def _console_thought(text: str) -> None:
-    console.print(f"[dim italic]💭 {text}[/dim italic]", end="")
-
-
-def _console_mcp_connect(transport: McpTransport) -> None:
-    console.print(f"[green]MCP connected[/green] [dim]{transport.label}[/dim]")
-
-
-@chat_group.command("start", help="Interactive chat session in the terminal")
-async def chat_start_fn(
-    message: str | None = Option(None, help="Optional first message to send"),
-    model: str = Option("gpt-4o-mini", "-m", "--model", help="Model to use"),
-    session_id: str | None = Option(None, "--resume", help="Resume session"),
-    max_tool_rounds: int = Option(
-        20, "--max-tools-round", help="Maximum number of tool calls per round"
-    ),
-    base_url: str | None = Option(
-        None, "--base-url", help="Custom OpenAI-compatible endpoint"
-    ),
-    extra_params: str | None = Option(
-        None,
-        "--extra-params",
-        help="Extra JSON object merged into every request body (e.g. '{\"temperature\": 0}')",
-    ),
-    mcp_urls: list[str] | None = Option(
-        None,
-        "--mcp",
-        help=f"Streamable-HTTP MCP server URL(s) to expose as tools (e.g. {DATAGOUV_MCP_URL})",
-    ),
-    ctx: TuiContext = TuiOption(),
-) -> None:
-    """Prompt loop over one persistent session; Ctrl-D or Ctrl-C exits."""
-    if ctx.is_tui:
-        ctx.notify(
-            "The TUI prompt is already interactive — use /chat:send", title="Chat"
-        )
-        return
-    parsed_extra, ok = _parse_extra_params(extra_params)
-    if not ok:
-        return
-
-    client = LLMClient(model=model, on_thought=_console_thought, base_url=base_url)
-    if isinstance(client, GeminiClient):
-        client.thinking_config = ThinkingConfig(includeThoughts=True)
-    session = AgentSession.load(
-        client=client,
-        mcp_tools=[McpStreamable(url=url) for url in mcp_urls or ()],
-        on_tool=_console_tool,
-        on_mcp_connect=_console_mcp_connect,
-        store=_store,
-        session_id=session_id or model,
-        max_tool_rounds=max_tool_rounds,
-        extra_params=parsed_extra,
-    )
-
-    # Async stdin so exiting never leaves a thread blocked on input(), and
-    # Ctrl-C cancels the task instead of tearing the loop down uncleanly.
-    loop = asyncio.get_running_loop()
-    reader = asyncio.StreamReader()
-    await loop.connect_read_pipe(
-        lambda: asyncio.StreamReaderProtocol(reader), sys.stdin
-    )
-    task = asyncio.current_task()
-    if task is not None:
-        loop.add_signal_handler(signal.SIGINT, task.cancel)
-
-    console.print(f"[green]Chat with {model}[/green] [dim](Ctrl-D to exit)[/dim]")
-    try:
-        async with session:
-            try:
-                first = message
-                while True:
-                    if first:
-                        user_input, first = first, None
-                        console.print(f"[bold cyan]you>[/bold cyan] {user_input}")
-                    else:
-                        console.print("[bold cyan]you>[/bold cyan] ", end="")
-                        line = await reader.readline()
-                        if not line:  # EOF (Ctrl-D)
-                            break
-                        user_input = line.decode().strip()
-                        if not user_input:
-                            continue
-                    try:
-                        async for chunk in session.stream(user_input):
-                            console.print(chunk, end="")
-                    except Exception as e:
-                        console.print(f"\n[red]✖ {e}[/red]")
-                        continue
-                    console.print()
-                    if tokens := _format_tokens(session):
-                        console.print(f"[dim]{tokens}[/dim]")
-            finally:
-                session.save()
-    except asyncio.CancelledError:
-        pass  # Ctrl-C: exit the loop cleanly
-    finally:
-        if task is not None:
-            loop.remove_signal_handler(signal.SIGINT)
-    console.print("\n[dim]bye[/dim]")
 
 
 @chat_group.command("send", help="Send a message to the LLM")
