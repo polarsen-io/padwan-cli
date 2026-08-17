@@ -196,7 +196,11 @@ async def _converse(
         callback=mic_callback,
     )
 
+    draining = False
+    sent_bytes = 0
+
     async def pump_mic() -> None:
+        nonlocal draining, sent_bytes
         # Timed get so the executor thread exits shortly after cancellation
         # instead of blocking threading shutdown at exit.
         blocking_get = functools.partial(mic_q.get, True, 0.25)
@@ -205,31 +209,51 @@ async def _converse(
                 chunk = await loop.run_in_executor(None, blocking_get)
             except queue.Empty:
                 continue
-            await conn.append_audio(chunk)
+            # The transport lets roughly one send through per read-poll tick,
+            # so batch everything captured while we waited for the socket.
+            parts = [chunk]
+            while True:
+                try:
+                    parts.append(mic_q.get_nowait())
+                except queue.Empty:
+                    break
+            draining = True
+            try:
+                joined = b"".join(parts)
+                await conn.append_audio(joined)
+                sent_bytes += len(joined)
+            finally:
+                draining = False
 
     turn_task: asyncio.Task | None = None
     last_space = 0.0
     turn_started_at = 0.0
 
     async def start_turn() -> None:
-        nonlocal turn_started_at
+        nonlocal turn_started_at, sent_bytes
         with mic_q.mutex:
             mic_q.queue.clear()  # drop audio captured before the press
         speaker.clear()  # stop the tutor if it was still talking
         await conn.send_event({"type": "input_audio_buffer.clear"})
         recording.set()
         turn_started_at = loop.time()
+        sent_bytes = 0
         console.print("[red]● recording…[/red] [dim]release Space to send[/dim]")
 
     async def end_turn() -> None:
         recording.clear()
-        await asyncio.sleep(0.15)  # let the last queued chunks reach the socket
+        # Wait until everything captured actually reached the socket, so the
+        # commit doesn't clip the tail of the turn.
+        deadline = loop.time() + 3
+        while (not mic_q.empty() or draining) and loop.time() < deadline:
+            await asyncio.sleep(0.05)
         if loop.time() - turn_started_at < _MIN_TURN_SECS:
             await conn.send_event({"type": "input_audio_buffer.clear"})
             console.print("[dim](too short — hold Space while speaking)[/dim]")
             return
         await conn.commit_audio()
         await conn.create_response()
+        console.print(f"[dim](sent {sent_bytes / (SR * 2):.1f}s of audio)[/dim]")
 
     def _spawn_turn(coro_fn) -> None:
         nonlocal turn_task
