@@ -1,7 +1,10 @@
+import asyncio
 import contextlib
 import json
 import mimetypes
 import os
+import signal
+import sys
 import time
 from contextlib import contextmanager
 from typing import Any
@@ -117,9 +120,128 @@ def _build_user_content(
         else:
             try:
                 parts.append(text_file_part(a.path))
-            except (OSError, UnicodeDecodeError):
+            except OSError, UnicodeDecodeError:
                 continue
     return parts
+
+
+def _parse_extra_params(raw: str | None) -> tuple[dict[str, Any] | None, bool]:
+    """Parse --extra-params JSON; print the error and return ok=False on failure."""
+    if raw is None:
+        return None, True
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError as e:
+        console.print(f"[red]--extra-params is not valid JSON: {e}[/red]")
+        return None, False
+    if not isinstance(parsed, dict):
+        console.print("[red]--extra-params must be a JSON object[/red]")
+        return None, False
+    return parsed, True
+
+
+@contextmanager
+def _console_tool(tc: ToolCallContext):
+    console.print(f"[dim]→ tool call: {tc.name}({tc.args})[/dim]")
+    t0 = time.perf_counter()
+    yield
+    console.print(f"[dim]  ↳ {time.perf_counter() - t0:.1f}s[/dim]")
+
+
+def _console_thought(text: str) -> None:
+    console.print(f"[dim italic]💭 {text}[/dim italic]", end="")
+
+
+def _console_mcp_connect(transport: McpTransport) -> None:
+    console.print(f"[green]MCP connected[/green] [dim]{transport.label}[/dim]")
+
+
+@chat_group.command("start", help="Interactive chat session in the terminal")
+async def chat_start_fn(
+    model: str = Option("gpt-4o-mini", "-m", "--model", help="Model to use"),
+    session_id: str | None = Option(None, "--resume", help="Resume session"),
+    max_tool_rounds: int = Option(
+        20, "--max-tools-round", help="Maximum number of tool calls per round"
+    ),
+    base_url: str | None = Option(
+        None, "--base-url", help="Custom OpenAI-compatible endpoint"
+    ),
+    extra_params: str | None = Option(
+        None,
+        "--extra-params",
+        help="Extra JSON object merged into every request body (e.g. '{\"temperature\": 0}')",
+    ),
+    mcp_urls: list[str] | None = Option(
+        None,
+        "--mcp",
+        help=f"Streamable-HTTP MCP server URL(s) to expose as tools (e.g. {DATAGOUV_MCP_URL})",
+    ),
+    ctx: TuiContext = TuiOption(),
+) -> None:
+    """Prompt loop over one persistent session; Ctrl-D or Ctrl-C exits."""
+    if ctx.is_tui:
+        ctx.notify(
+            "The TUI prompt is already interactive — use /chat:send", title="Chat"
+        )
+        return
+    parsed_extra, ok = _parse_extra_params(extra_params)
+    if not ok:
+        return
+
+    client = LLMClient(model=model, on_thought=_console_thought, base_url=base_url)
+    if isinstance(client, GeminiClient):
+        client.thinking_config = ThinkingConfig(includeThoughts=True)
+    session = AgentSession.load(
+        client=client,
+        mcp_tools=[McpStreamable(url=url) for url in mcp_urls or ()],
+        on_tool=_console_tool,
+        on_mcp_connect=_console_mcp_connect,
+        store=_store,
+        session_id=session_id or model,
+        max_tool_rounds=max_tool_rounds,
+        extra_params=parsed_extra,
+    )
+
+    # Async stdin so exiting never leaves a thread blocked on input(), and
+    # Ctrl-C cancels the task instead of tearing the loop down uncleanly.
+    loop = asyncio.get_running_loop()
+    reader = asyncio.StreamReader()
+    await loop.connect_read_pipe(
+        lambda: asyncio.StreamReaderProtocol(reader), sys.stdin
+    )
+    task = asyncio.current_task()
+    if task is not None:
+        loop.add_signal_handler(signal.SIGINT, task.cancel)
+
+    console.print(f"[green]Chat with {model}[/green] [dim](Ctrl-D to exit)[/dim]")
+    try:
+        async with session:
+            try:
+                while True:
+                    console.print("[bold cyan]you>[/bold cyan] ", end="")
+                    line = await reader.readline()
+                    if not line:  # EOF (Ctrl-D)
+                        break
+                    user_input = line.decode().strip()
+                    if not user_input:
+                        continue
+                    try:
+                        async for chunk in session.stream(user_input):
+                            console.print(chunk, end="")
+                    except Exception as e:
+                        console.print(f"\n[red]✖ {e}[/red]")
+                        continue
+                    console.print()
+                    if tokens := _format_tokens(session):
+                        console.print(f"[dim]{tokens}[/dim]")
+            finally:
+                session.save()
+    except asyncio.CancelledError:
+        pass  # Ctrl-C: exit the loop cleanly
+    finally:
+        if task is not None:
+            loop.remove_signal_handler(signal.SIGINT)
+    console.print("\n[dim]bye[/dim]")
 
 
 @chat_group.command("send", help="Send a message to the LLM")
@@ -195,16 +317,9 @@ async def chat_send_fn(
         else:
             console.print(f"[green]MCP connected[/green] [dim]{transport.label}[/dim]")
 
-    parsed_extra: dict[str, Any] | None = None
-    if extra_params is not None:
-        try:
-            parsed_extra = json.loads(extra_params)
-        except json.JSONDecodeError as e:
-            console.print(f"[red]--extra-params is not valid JSON: {e}[/red]")
-            return
-        if not isinstance(parsed_extra, dict):
-            console.print("[red]--extra-params must be a JSON object[/red]")
-            return
+    parsed_extra, ok = _parse_extra_params(extra_params)
+    if not ok:
+        return
 
     try:
         client = LLMClient(model=model, on_thought=_on_thought, base_url=base_url)
@@ -290,13 +405,17 @@ async def chat_send_fn(
                         sent = list(pending)
                         ctx.mount_widget(UserMessage(user_input))
                         if sent:
-                            skipped = [a for a in sent if a.is_image and not a.supported]
+                            skipped = [
+                                a for a in sent if a.is_image and not a.supported
+                            ]
                             badge_warning = (
                                 f"{model} can't read images — {len(skipped)} skipped"
                                 if skipped
                                 else None
                             )
-                            ctx.mount_widget(AttachmentBadge(sent, warning=badge_warning))
+                            ctx.mount_widget(
+                                AttachmentBadge(sent, warning=badge_warning)
+                            )
                         content = _build_user_content(user_input, sent)
                         pending.clear()
                         ctx.set_attachments(None)
