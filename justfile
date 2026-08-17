@@ -1,5 +1,6 @@
 set quiet
 set dotenv-load
+set positional-arguments
 
 # List available recipes
 default:
@@ -7,7 +8,7 @@ default:
 
 # Interactive chat in the terminal (.env keys loaded automatically)
 chat *args:
-    uv run python -m padwan_cli chat start {{ args }}
+    uv run python -m padwan_cli chat start "$@"
 
 # Run unit tests
 [group('dev')]

@@ -158,6 +158,7 @@ def _console_mcp_connect(transport: McpTransport) -> None:
 
 @chat_group.command("start", help="Interactive chat session in the terminal")
 async def chat_start_fn(
+    message: str | None = Option(None, help="Optional first message to send"),
     model: str = Option("gpt-4o-mini", "-m", "--model", help="Model to use"),
     session_id: str | None = Option(None, "--resume", help="Resume session"),
     max_tool_rounds: int = Option(
@@ -217,14 +218,19 @@ async def chat_start_fn(
     try:
         async with session:
             try:
+                first = message
                 while True:
-                    console.print("[bold cyan]you>[/bold cyan] ", end="")
-                    line = await reader.readline()
-                    if not line:  # EOF (Ctrl-D)
-                        break
-                    user_input = line.decode().strip()
-                    if not user_input:
-                        continue
+                    if first:
+                        user_input, first = first, None
+                        console.print(f"[bold cyan]you>[/bold cyan] {user_input}")
+                    else:
+                        console.print("[bold cyan]you>[/bold cyan] ", end="")
+                        line = await reader.readline()
+                        if not line:  # EOF (Ctrl-D)
+                            break
+                        user_input = line.decode().strip()
+                        if not user_input:
+                            continue
                     try:
                         async for chunk in session.stream(user_input):
                             console.print(chunk, end="")
