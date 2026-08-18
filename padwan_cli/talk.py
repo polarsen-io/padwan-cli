@@ -14,6 +14,7 @@ import tty
 from piou import Option
 from piou.tui import get_tui_context
 
+from padwan_llm.errors import LLMError
 from padwan_llm.openai.realtime import (
     NO_TURN_DETECTION,
     REALTIME_SAMPLE_RATE,
@@ -333,16 +334,14 @@ async def talk_command(
     if check:
         console.print(sd.query_devices())
         console.print(f"\nDefault (input, output): {sd.default.device}")
-        key_found = bool(os.environ.get("OPENAI_API_KEY"))
-        console.print(
-            f"OPENAI_API_KEY: {'found' if key_found else '[red]MISSING[/red]'}"
-        )
+        try:
+            RealtimeClient(model=model)
+            key_status = "found"
+        except LLMError:
+            key_status = "[red]MISSING[/red]"
+        console.print(f"OPENAI_API_KEY: {key_status}")
         console.print(f"model={model}  voice={voice}")
         return
-
-    if not os.environ.get("OPENAI_API_KEY"):
-        console.print("[red]OPENAI_API_KEY not set[/red] — export it or add it to .env")
-        raise SystemExit(1)
 
     push_to_talk = not hands_free
     if push_to_talk and not sys.stdin.isatty():
@@ -352,11 +351,15 @@ async def talk_command(
         push_to_talk = False
 
     prompt = instructions or _DEFAULT_INSTRUCTIONS
+    # The client validates the API key itself (LLMError when unset).
+    try:
+        client = RealtimeClient(model=model)
+    except LLMError as e:
+        console.print(f"[red]{e}[/red] [dim]— export it or add it to .env[/dim]")
+        return
     speaker = Speaker(sd)
     # Push-to-talk disables server VAD so we commit each turn ourselves.
     turn_detection = NO_TURN_DETECTION if push_to_talk else None
-
-    client = RealtimeClient(model=model)
     console.print(f"[dim]connecting to {model} (voice: {voice})…[/dim]")
     # Route Ctrl-C through task cancellation: a raw KeyboardInterrupt tears the
     # loop down without unwinding connect()/mic/speaker, leaking pending tasks.
