@@ -6,9 +6,9 @@ set positional-arguments
 default:
     @just --list
 
-# Chat in the terminal (.env keys loaded automatically)
+# Open the chat TUI (.env keys loaded automatically)
 chat *args:
-    uv run python -m padwan_cli chat send "$@"
+    uv run padwan-cli /chat:send "$@"
 
 # Run unit tests
 [group('dev')]
