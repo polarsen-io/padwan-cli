@@ -10,7 +10,6 @@ import sys
 import termios
 import threading
 import tty
-from pathlib import Path
 
 from piou import Option
 from piou.tui import get_tui_context
@@ -36,33 +35,9 @@ BLOCK = 1200  # 50 ms frames
 _HOLD_RELEASE_GAP = 0.8
 _MIN_TURN_SECS = 0.45
 
-# Looked up for OPENAI_API_KEY when it is not already exported.
-_ENV_FILES = (
-    Path.cwd() / ".env",
-    Path.home() / "Projects/Polarsen/padwan-llm/.env",
-)
-
-
 _DEFAULT_INSTRUCTIONS = """You are a friendly voice assistant.
 Keep spoken replies brief and conversational — one or two sentences — so the
 exchange stays a real back-and-forth."""
-
-
-def load_api_key() -> str | None:
-    """Return OPENAI_API_KEY from the environment or a known .env file."""
-    if key := os.environ.get("OPENAI_API_KEY"):
-        return key
-    for env_file in _ENV_FILES:
-        if not env_file.is_file():
-            continue
-        for line in env_file.read_text().splitlines():
-            line = line.strip()
-            if line.startswith("OPENAI_API_KEY="):
-                value = line.split("=", 1)[1].strip().strip("'\"")
-                if value:
-                    os.environ["OPENAI_API_KEY"] = value
-                    return value
-    return None
 
 
 class Speaker:
@@ -358,17 +333,15 @@ async def talk_command(
     if check:
         console.print(sd.query_devices())
         console.print(f"\nDefault (input, output): {sd.default.device}")
+        key_found = bool(os.environ.get("OPENAI_API_KEY"))
         console.print(
-            f"OPENAI_API_KEY: {'found' if load_api_key() else '[red]MISSING[/red]'}"
+            f"OPENAI_API_KEY: {'found' if key_found else '[red]MISSING[/red]'}"
         )
         console.print(f"model={model}  voice={voice}")
         return
 
-    if not load_api_key():
-        console.print(
-            "[red]OPENAI_API_KEY not set[/red] and not found in "
-            + " or ".join(str(p) for p in _ENV_FILES)
-        )
+    if not os.environ.get("OPENAI_API_KEY"):
+        console.print("[red]OPENAI_API_KEY not set[/red] — export it or add it to .env")
         raise SystemExit(1)
 
     push_to_talk = not hands_free
