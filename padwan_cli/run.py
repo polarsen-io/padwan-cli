@@ -39,9 +39,7 @@ cli = Cli(description="Padwan CLI for the unified LLM client library")
 cli.add_command_group(batch_group)
 cli.add_command_group(chat_group)
 
-cli.command("talk", help="Speech-to-speech voice chat")(
-    talk_command
-)
+cli.command("talk", help="Speech-to-speech voice chat")(talk_command)
 
 
 @cli.tui_on_ready
