@@ -447,7 +447,7 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "padwan-llm", extras = ["realtime"], editable = "../padwan-llm" },
-    { name = "piou", extras = ["tui"], editable = "../../piou" },
+    { name = "piou", extras = ["tui"], specifier = ">=0.36.0" },
     { name = "sounddevice", marker = "extra == 'voice'", specifier = ">=0.5" },
 ]
 provides-extras = ["voice"]
@@ -455,7 +455,7 @@ provides-extras = ["voice"]
 [package.metadata.requires-dev]
 bump = [{ name = "commitizen", specifier = ">=4.0.0" }]
 dev = [
-    { name = "piou", extras = ["tui-reload"], editable = "../../piou" },
+    { name = "piou", extras = ["tui-reload"], specifier = ">=0.36.0" },
     { name = "pyright", specifier = ">=1.1.408" },
     { name = "pytest", specifier = ">=8.0.0" },
     { name = "pytest-asyncio", specifier = ">=1.3.0" },
@@ -516,11 +516,15 @@ research = [
 
 [[package]]
 name = "piou"
-version = "0.35.3"
-source = { editable = "../../piou" }
+version = "0.36.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "rich" },
     { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/38/eb/3b09d8b8330b036871c7093ba8abf5f7f3a708b5c1652bc2696252f11c7e/piou-0.36.0.tar.gz", hash = "sha256:22eabc0dc86a314ee095ce2be44ab3dfa3703dbc0b772081df6d47d6e355b345", size = 1650375, upload-time = "2026-08-18T13:09:05.236Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ab/00/40dae59cf84e64b086b799b92151818edc4eef9536afc146b84000019acb/piou-0.36.0-py3-none-any.whl", hash = "sha256:40094a9c08716e4a1030500631b4b2a9b2fc82f784d4ac3412bc93f834a2d73a", size = 57019, upload-time = "2026-08-18T13:09:04.054Z" },
 ]
 
 [package.optional-dependencies]
@@ -530,43 +534,6 @@ tui = [
 tui-reload = [
     { name = "textual" },
     { name = "watchfiles" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "rich", specifier = ">=10.11.0,<16.0" },
-    { name = "textual", marker = "extra == 'tui'", specifier = ">=0.40.0" },
-    { name = "textual", marker = "extra == 'tui-reload'", specifier = ">=0.40.0" },
-    { name = "typing-extensions", specifier = ">=4.4.0" },
-    { name = "watchfiles", marker = "extra == 'tui-reload'", specifier = ">=1.0.0" },
-]
-provides-extras = ["tui", "tui-reload"]
-
-[package.metadata.requires-dev]
-bump = [{ name = "commitizen", specifier = ">=4.9.1" }]
-dev = [
-    { name = "prek", specifier = ">=0.3.0" },
-    { name = "pyright", specifier = ">=1.1.407" },
-    { name = "pytest", specifier = ">=8.4.1" },
-    { name = "pytest-asyncio", specifier = ">=0.24.0" },
-    { name = "pytest-cov", specifier = ">=6.2.1" },
-    { name = "pytest-textual-snapshot", specifier = ">=1.0.0" },
-    { name = "ruff", specifier = ">=0.14.4" },
-    { name = "textual", specifier = ">=0.40.0" },
-    { name = "textual-dev", specifier = ">=1.0.0" },
-    { name = "watchfiles", specifier = ">=1.0.0" },
-]
-docs = [{ name = "mkdocs-material", specifier = ">=9.5.0" }]
-examples = [
-    { name = "aiohttp", specifier = ">=3.14.0" },
-    { name = "httpx", extras = ["http2"], specifier = ">=0.28.1" },
-    { name = "niquests", specifier = ">=3.16.1" },
-    { name = "textual", specifier = ">=0.40.0" },
-]
-tui = [{ name = "textual", specifier = ">=0.40.0" }]
-tui-reload = [
-    { name = "textual", specifier = ">=0.40.0" },
-    { name = "watchfiles", specifier = ">=1.0.0" },
 ]
 
 [[package]]

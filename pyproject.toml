@@ -9,7 +9,7 @@ authors = [
 requires-python = ">=3.14"
 dependencies = [
     "padwan-llm[realtime]>=0.6.0",
-    "piou[tui]>=0.34.1",
+    "piou[tui]>=0.36.0",
 ]
 
 [project.optional-dependencies]
@@ -27,15 +27,14 @@ build-backend = "uv_build"
 [tool.uv.build-backend]
 module-root = ""
 
-# Local editable sources for in-progress drag-and-drop work (padwan-llm content
-# parts/vision + piou paste hook). Remove once both are published and pins bumped.
+# Local editable source for in-progress padwan-llm work (content parts/vision,
+# realtime). Remove once published and the pin bumped.
 [tool.uv.sources]
 padwan-llm = { path = "../padwan-llm", editable = true }
-piou = { path = "../../piou", editable = true }
 
 [dependency-groups]
 dev = [
-    "piou[tui-reload]>=0.33.0",
+    "piou[tui-reload]>=0.36.0",
     "pyright>=1.1.408",
     "pytest>=8.0.0",
     "pytest-asyncio>=1.3.0",
