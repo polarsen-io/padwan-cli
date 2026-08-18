@@ -10,6 +10,7 @@ requires-python = ">=3.14"
 dependencies = [
     "padwan-llm[realtime]>=0.6.0",
     "piou[tui]>=0.36.0",
+    "tracktolib>=0.74.0",
 ]
 
 [project.optional-dependencies]

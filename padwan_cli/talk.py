@@ -13,6 +13,7 @@ import tty
 
 from piou import Option
 from piou.tui import get_tui_context
+from tracktolib.utils import BytesBuffer
 
 from padwan_llm.errors import LLMError
 from padwan_llm.openai.realtime import (
@@ -42,10 +43,15 @@ exchange stays a real back-and-forth."""
 
 
 class Speaker:
-    """Buffered PCM16 playback with barge-in support."""
+    """Buffered PCM16 playback with barge-in support.
+
+    BytesBuffer keeps the audio callback O(read size): appends are reference-
+    only and reads copy at chunk boundaries, instead of memmoving the whole
+    queued backlog on every 50 ms tick.
+    """
 
     def __init__(self, sd) -> None:
-        self._buf = bytearray()
+        self._buf = BytesBuffer()
         self._lock = threading.Lock()
         self.stream = sd.RawOutputStream(
             samplerate=SR,
@@ -58,19 +64,18 @@ class Speaker:
     def _callback(self, outdata, frames, _time, _status) -> None:  # PortAudio thread
         need = frames * CHANNELS * 2
         with self._lock:
-            take = bytes(self._buf[:need])
-            del self._buf[: len(take)]
+            take = self._buf.get(need) if len(self._buf) else b""
         if len(take) < need:
             take += b"\x00" * (need - len(take))  # underflow -> silence
         outdata[:] = take
 
     def play(self, pcm16: bytes) -> None:
         with self._lock:
-            self._buf.extend(pcm16)
+            self._buf.put(pcm16)
 
     def clear(self) -> None:
         with self._lock:
-            self._buf.clear()
+            self._buf = BytesBuffer()
 
 
 def _import_sounddevice():

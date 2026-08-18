@@ -421,6 +421,7 @@ source = { editable = "." }
 dependencies = [
     { name = "padwan-llm", extra = ["realtime"] },
     { name = "piou", extra = ["tui"] },
+    { name = "tracktolib" },
 ]
 
 [package.optional-dependencies]
@@ -449,6 +450,7 @@ requires-dist = [
     { name = "padwan-llm", extras = ["realtime"], editable = "../padwan-llm" },
     { name = "piou", extras = ["tui"], specifier = ">=0.36.0" },
     { name = "sounddevice", marker = "extra == 'voice'", specifier = ">=0.5" },
+    { name = "tracktolib", specifier = ">=0.74.0" },
 ]
 provides-extras = ["voice"]
 
@@ -846,6 +848,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/c3/af/14b24e41977adb296d6bd1fb59402cf7d60ce364f90c890bd2ec65c43b5a/tomlkit-0.14.0.tar.gz", hash = "sha256:cf00efca415dbd57575befb1f6634c4f42d2d87dbba376128adb42c121b87064", size = 187167, upload-time = "2026-01-13T01:14:53.304Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b5/11/87d6d29fb5d237229d67973a6c9e06e048f01cf4994dee194ab0ea841814/tomlkit-0.14.0-py3-none-any.whl", hash = "sha256:592064ed85b40fa213469f81ac584f67a4f2992509a7c3ea2d632208623a3680", size = 39310, upload-time = "2026-01-13T01:14:51.965Z" },
+]
+
+[[package]]
+name = "tracktolib"
+version = "0.74.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0a/9a/a01f81aa6399971de9c5a9fae26c258f705beb60db26befdb8034e02c03c/tracktolib-0.74.0.tar.gz", hash = "sha256:4fcc6d1225ac40590376328f198ff5b861d851685b9db372167b9bb86197cc38", size = 50360, upload-time = "2026-02-26T20:33:12.107Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fb/e4/476c23cae02f8d2df43face6b9ac470d7094fe1ac93ef06a68b1a349c7f6/tracktolib-0.74.0-py3-none-any.whl", hash = "sha256:196257eb51d172e2caeaf6f36710ccedc0058a514c9c18a0844d355a87995818", size = 60750, upload-time = "2026-02-26T20:33:11.003Z" },
 ]
 
 [[package]]
