@@ -1,9 +1,9 @@
 import contextlib
 import json
 import mimetypes
-import os
 import time
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Any
 
 from piou import Option, CommandGroup
@@ -255,17 +255,17 @@ async def chat_send_fn(
                 ctx.set_rule_above(add_class=add, remove_class=remove)
                 ctx.set_rule_below(add_class=add, remove_class=remove)
 
-            def _on_drop(paths: list[str]) -> None:
+            def _on_drop(paths: list[Path]) -> None:
                 for p in paths:
                     try:
-                        size = os.path.getsize(p)
+                        size = p.stat().st_size
                     except OSError:
                         continue
                     is_image = (mimetypes.guess_type(p)[0] or "").startswith("image/")
                     pending.append(
                         Attachment(
                             path=p,
-                            name=os.path.basename(p),
+                            name=p.name,
                             size=size,
                             is_image=is_image,
                             supported=(not is_image) or supports_vision(model),

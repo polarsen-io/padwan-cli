@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
 from rich import box
@@ -32,7 +33,7 @@ CHIP_BORDER = "#3a3f55"
 class Attachment:
     """A file dropped into the chat, queued to send with the next message."""
 
-    path: str
+    path: Path
     name: str
     size: int
     is_image: bool
@@ -90,6 +91,7 @@ class AttachmentBadge(Static):
         self, attachments: list[Attachment], *, warning: str | None = None, **kwargs
     ) -> None:
         super().__init__(render_attachments(attachments, warning=warning), **kwargs)
+
 
 # Colors for batch job states
 STATE_COLORS = {
