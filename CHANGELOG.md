@@ -1,3 +1,32 @@
+## 0.5.0 (2026-08-19)
+
+### Feat
+
+- **chat**: optional first message for chat:start; quote just chat args
+- just chat recipe and env.template
+- **chat**: chat:start interactive terminal session
+- **talk**: print your transcript before the tutor's reply
+- **talk**: hold-to-talk — hold Space while speaking, release to send
+- **chat**: file attachments + talk voice tutor
+
+### Fix
+
+- **talk**: batch mic audio per send and flush before commit
+- **talk**: clean shutdown — cancel turn tasks, route Ctrl-C through task cancellation, timed mic reads
+
+### Refactor
+
+- **chat**: adopt piou's list[Path] paste contract
+- **talk**: let the padwan-llm client validate the API key
+- **talk**: drop the hardcoded .env fallback; require OPENAI_API_KEY in the environment
+- just chat opens the chat TUI instead of headless send
+- **chat**: drop chat:start; just chat wraps chat:send
+- **talk**: generic voice assistant instead of the language-tutor persona
+
+### Perf
+
+- **talk**: tracktolib BytesBuffer for speaker playback
+
 ## 0.4.0 (2026-06-12)
 
 ### Feat
