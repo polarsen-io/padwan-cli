@@ -15,6 +15,7 @@ nav = [
   { "Getting Started" = "getting-started.md" },
   { "Commands" = [
     { "Chat" = "commands/chat.md" },
+    { "Talk" = "commands/talk.md" },
     { "Batch" = "commands/batch.md" },
   ] },
 ]

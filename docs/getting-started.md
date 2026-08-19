@@ -12,6 +12,12 @@ Or with [uv](https://docs.astral.sh/uv/):
 uv tool install padwan-cli
 ```
 
+For the [`talk`](commands/talk.md) voice command, install the `voice` extra (audio I/O also needs the PortAudio system library, e.g. `apt install libportaudio2`):
+
+```bash
+pip install "padwan-cli[voice]"
+```
+
 ## Requirements
 
 - Python >= 3.14

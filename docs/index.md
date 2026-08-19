@@ -4,12 +4,14 @@ Padwan CLI is an interactive CLI and TUI for [padwan-llm](https://github.com/Pol
 It provides a terminal interface for querying multiple LLM providers — OpenAI, Gemini, Mistral, and Grok — through a single tool.
 
 !!! note "Playground project"
-    This is a playground for experimenting with `padwan-llm` features (streaming, agents, MCP, thinking tokens, batch jobs) — not a production-grade tool. Expect rough edges and breaking changes.
+    This is a playground for experimenting with `padwan-llm` features (streaming, agents, MCP, thinking tokens, batch jobs, realtime voice) — not a production-grade tool. Expect rough edges and breaking changes.
 
 ## Features
 
 - **One-shot queries** — send a prompt and get a response, with optional streaming
 - **Interactive chat** — multi-turn conversations with persistent session history
+- **File attachments** — drag and drop files onto the chat; text is inlined, images go to vision-capable models
+- **Voice mode** — real-time speech-to-speech conversations (`talk`)
 - **Batch processing** — submit, poll, and export Gemini batch jobs
 - **Dual interface** — works as both a traditional CLI and a rich TUI (via [piou](https://github.com/Polarsen/piou))
 - **Multi-provider** — switch between providers with a `-m` flag
@@ -49,6 +51,7 @@ The `padwan-cli` script launches the TUI; `python -m padwan_cli` runs the same c
 | `info` | Show model count per provider |
 | `chat send` | Start an interactive conversation |
 | `chat clear` | Clear conversation history |
+| `talk` | Real-time speech-to-speech voice session |
 | `batch create` | Create a Gemini batch job |
 | `batch status` | Check batch job status |
 | `batch list` | List recent batch jobs |

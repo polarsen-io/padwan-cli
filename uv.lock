@@ -416,7 +416,7 @@ wheels = [
 
 [[package]]
 name = "padwan-cli"
-version = "0.4.0"
+version = "0.5.0"
 source = { editable = "." }
 dependencies = [
     { name = "padwan-llm", extra = ["realtime"] },
