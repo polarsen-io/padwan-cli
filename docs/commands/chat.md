@@ -39,6 +39,24 @@ in: 42 out: 128 cached: 0 | session: 170 | mcp: 1 | 2 queued
 - **mcp** — number of connected MCP servers (only shown when > 0)
 - **queued** — messages typed while the model was responding, awaiting their turn (only shown when > 0)
 
+### Attaching files
+
+In TUI mode you can **drag and drop files** onto the terminal while in chat mode.
+The terminal pastes the dropped file's path, which the chat detects and turns into
+an attachment — a chip appears above the input listing each queued file. Type your
+message and press Enter to send the files along with it; press **Ctrl+U** to clear
+the queued attachments.
+
+- **Text files** (code, Markdown, JSON, …) are read and inlined into your message,
+  so they work with any model.
+- **Images** are sent to the model as image input — this requires a vision-capable
+  model (e.g. `gpt-4o`, `gemini-2.5-flash`, `pixtral-large-latest`). If the active
+  model can't see images, the chip is marked `⚠ needs a vision model` and the image
+  is left out of the request (switch models with `-m`).
+
+You need to type at least a short message to send; dropping a file alone won't send.
+Drag-and-drop is a TUI-only feature.
+
 ### Tools and MCP
 
 Chat sessions run without tools by default. Pass `--mcp` with one or more streamable-HTTP MCP server URLs to expose their tools to the model:

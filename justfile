@@ -1,9 +1,14 @@
 set quiet
 set dotenv-load
+set positional-arguments
 
 # List available recipes
 default:
     @just --list
+
+# Open the chat TUI (.env keys loaded automatically)
+chat *args:
+    uv run padwan-cli /chat:send "$@"
 
 # Run unit tests
 [group('dev')]

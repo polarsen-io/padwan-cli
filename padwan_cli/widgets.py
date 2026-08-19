@@ -1,8 +1,14 @@
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
+from rich import box
+from rich.columns import Columns
+from rich.console import Group, RenderableType
+from rich.panel import Panel
 from rich.text import Text
 from textual.widgets import Static
 
@@ -17,6 +23,75 @@ ASSISTANT_COLOR = "#98fb98"
 TOOL_CALL_COLOR = "#ffa500"
 THOUGHT_COLOR = "#9370db"
 ERROR_COLOR = "#ff6b6b"
+ATTACHMENT_COLOR = USER_COLOR
+WARN_COLOR = "#fbbf24"
+CHIP_BG = "#1f2230"
+CHIP_BORDER = "#3a3f55"
+
+
+@dataclass
+class Attachment:
+    """A file dropped into the chat, queued to send with the next message."""
+
+    path: Path
+    name: str
+    size: int
+    is_image: bool
+    supported: bool  # whether the active model can use it (images need vision)
+
+
+def human_size(num_bytes: int) -> str:
+    """Format a byte count as a short human-readable string."""
+    size = float(num_bytes)
+    for unit in ("B", "KB", "MB", "GB"):
+        if size < 1024 or unit == "GB":
+            return f"{int(size)} {unit}" if unit == "B" else f"{size:.1f} {unit}"
+        size /= 1024
+    return f"{size:.1f} GB"
+
+
+def _chip_panel(a: Attachment) -> Panel:
+    """Build one bordered pill chip for an attachment.
+
+    Unsupported files get an amber border (the "which"); the reason — a
+    model-level fact — is carried once by the warning bar and hint.
+    """
+    label = Text()
+    label.append(f"📎 {a.name}", style=ATTACHMENT_COLOR)
+    label.append(f"  {human_size(a.size)}", style="dim")
+    return Panel(
+        label,
+        box=box.ROUNDED,
+        border_style=WARN_COLOR if not a.supported else CHIP_BORDER,
+        style=f"on {CHIP_BG}",
+        padding=(0, 1),
+        expand=False,
+    )
+
+
+def render_chips(attachments: list[Attachment]) -> Columns:
+    """Render queued attachments as a row of bordered pill chips."""
+    return Columns([_chip_panel(a) for a in attachments], padding=(0, 1), expand=False)
+
+
+def render_attachments(
+    attachments: list[Attachment], *, warning: str | None = None
+) -> RenderableType:
+    """Render the attachment block: an optional amber warning line, then chips."""
+    chips = render_chips(attachments)
+    if warning:
+        return Group(Text(f"⚠ {warning}", style=WARN_COLOR), chips)
+    return chips
+
+
+class AttachmentBadge(Static):
+    """Bordered pill chips shown under a sent user message."""
+
+    def __init__(
+        self, attachments: list[Attachment], *, warning: str | None = None, **kwargs
+    ) -> None:
+        super().__init__(render_attachments(attachments, warning=warning), **kwargs)
+
 
 # Colors for batch job states
 STATE_COLORS = {

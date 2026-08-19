@@ -23,10 +23,14 @@ from padwan_llm.errors import Provider
 from .utils import console
 from .batch import batch_group
 from .chat import chat_group
+from .talk import talk_command
 
 CUSTOM_CSS = """
 Rule.chat-mode {
     color: #87ceeb;
+}
+Rule.attach-warning {
+    color: #fbbf24;
 }
 """
 
@@ -34,6 +38,8 @@ cli = Cli(description="Padwan CLI for the unified LLM client library")
 
 cli.add_command_group(batch_group)
 cli.add_command_group(chat_group)
+
+cli.command("talk", help="Speech-to-speech voice chat")(talk_command)
 
 
 @cli.tui_on_ready
