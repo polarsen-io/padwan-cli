@@ -8,7 +8,7 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
-    "padwan-llm[realtime]>=0.6.0",
+    "padwan-llm[realtime]>=0.8.0",
     "piou[tui]>=0.36.0",
     "tracktolib>=0.74.0",
 ]
@@ -27,11 +27,6 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-root = ""
-
-# Local editable source for in-progress padwan-llm work (content parts/vision,
-# realtime). Remove once published and the pin bumped.
-[tool.uv.sources]
-padwan-llm = { path = "../padwan-llm", editable = true }
 
 [dependency-groups]
 dev = [

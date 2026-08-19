@@ -15,14 +15,9 @@ from piou import Option
 from piou.tui import get_tui_context
 from tracktolib.utils import BytesBuffer
 
+from padwan_llm import RealtimeClient, RealtimeConnection, RealtimeServerEvent
 from padwan_llm.errors import LLMError
-from padwan_llm.openai.realtime import (
-    NO_TURN_DETECTION,
-    REALTIME_SAMPLE_RATE,
-    RealtimeClient,
-    RealtimeConnection,
-    RealtimeServerEvent,
-)
+from padwan_llm.openai.realtime import NO_TURN_DETECTION, REALTIME_SAMPLE_RATE
 
 from .utils import console
 
@@ -356,26 +351,29 @@ async def talk_command(
         push_to_talk = False
 
     prompt = instructions or _DEFAULT_INSTRUCTIONS
+    # Push-to-talk disables server VAD so we commit each turn ourselves.
+    turn_detection = NO_TURN_DETECTION if push_to_talk else None
     # The client validates the API key itself (LLMError when unset).
     try:
-        client = RealtimeClient(model=model)
+        client = RealtimeClient(
+            model=model,
+            instructions=prompt,
+            voice=voice,
+            turn_detection=turn_detection,
+        )
     except LLMError as e:
         console.print(f"[red]{e}[/red] [dim]— export it or add it to .env[/dim]")
         return
     speaker = Speaker(sd)
-    # Push-to-talk disables server VAD so we commit each turn ourselves.
-    turn_detection = NO_TURN_DETECTION if push_to_talk else None
     console.print(f"[dim]connecting to {model} (voice: {voice})…[/dim]")
     # Route Ctrl-C through task cancellation: a raw KeyboardInterrupt tears the
-    # loop down without unwinding connect()/mic/speaker, leaking pending tasks.
+    # loop down without unwinding the session/mic/speaker, leaking pending tasks.
     loop = asyncio.get_running_loop()
     task = asyncio.current_task()
     if task is not None:
         loop.add_signal_handler(signal.SIGINT, task.cancel)
     try:
-        async with client.connect(
-            instructions=prompt, voice=voice, turn_detection=turn_detection
-        ) as conn:
+        async with client as conn:
             with speaker.stream:
                 if push_to_talk:
                     console.print(

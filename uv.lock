@@ -447,7 +447,7 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "padwan-llm", extras = ["realtime"], editable = "../padwan-llm" },
+    { name = "padwan-llm", extras = ["realtime"], specifier = ">=0.8.0" },
     { name = "piou", extras = ["tui"], specifier = ">=0.36.0" },
     { name = "sounddevice", marker = "extra == 'voice'", specifier = ">=0.5" },
     { name = "tracktolib", specifier = ">=0.74.0" },
@@ -468,52 +468,21 @@ docs = [{ name = "zensical", specifier = ">=0.0.31" }]
 
 [[package]]
 name = "padwan-llm"
-version = "0.7.1"
-source = { editable = "../padwan-llm" }
+version = "0.8.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "niquests" },
     { name = "qh3" },
     { name = "urllib3-future" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/6b/60/c15877fbb37a72ab11b03d387f676c3dcfe4499c54e8f8d061df45a58e80/padwan_llm-0.8.0.tar.gz", hash = "sha256:abcd54ba0d5c6d0e8eb39ec39f652b37cb7ead79ffd99ebffca80538776f236b", size = 66924, upload-time = "2026-08-19T19:50:08.16Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1f/0d/7452830179218c835cb9cb8759a0cb178adcb8de05dd00e311e65191f333/padwan_llm-0.8.0-py3-none-any.whl", hash = "sha256:6af6e811b23e998d1fb0d1e2f7e4afe7361e21e1cc11c443d7975fb531ac6c08", size = 85167, upload-time = "2026-08-19T19:50:06.947Z" },
+]
 
 [package.optional-dependencies]
 realtime = [
     { name = "niquests", extra = ["ws"] },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "niquests", specifier = ">=3.21.0" },
-    { name = "niquests", extras = ["ws"], marker = "extra == 'realtime'", specifier = ">=3.21.0" },
-    { name = "qh3", specifier = ">=1.7.1" },
-    { name = "typing-extensions", marker = "python_full_version < '3.14'", specifier = ">=4.10" },
-    { name = "urllib3-future", specifier = ">=2.19.908" },
-]
-provides-extras = ["realtime"]
-
-[package.metadata.requires-dev]
-bump = [{ name = "commitizen", specifier = ">=4.0.0" }]
-dev = [
-    { name = "anthropic", specifier = ">=0.116.0" },
-    { name = "prek", specifier = ">=0.2.30" },
-    { name = "pyright", specifier = ">=1.1.400" },
-    { name = "pytest", specifier = ">=8.0.0" },
-    { name = "pytest-asyncio", specifier = ">=0.25.0" },
-    { name = "pytest-cov", specifier = ">=6.0.0" },
-    { name = "python-dotenv", specifier = ">=1.2.1" },
-    { name = "ruff", specifier = ">=0.15.2" },
-]
-docs = [{ name = "zensical", specifier = ">=0.0.31" }]
-llms = [
-    { name = "google-genai", specifier = ">=2.1.0" },
-    { name = "mcp", specifier = ">=2.0.0" },
-    { name = "openai", specifier = ">=2.36.0" },
-    { name = "xai-sdk", specifier = ">=1.12.2" },
-]
-research = [
-    { name = "jupyter", specifier = ">=1.1.1" },
-    { name = "pandas", specifier = ">=2.3.3" },
-    { name = "python-dotenv", specifier = ">=1.2.1" },
 ]
 
 [[package]]
