@@ -71,7 +71,9 @@ class TestBuildUserContent:
     def test_text_and_supported_image(self, tmp_path):
         img = tmp_path / "shot.png"
         img.write_bytes(b"\x89PNG\r\n")
-        content = _build_user_content("look", [_attachment(img, is_image=True, supported=True)])
+        content = _build_user_content(
+            "look", [_attachment(img, is_image=True, supported=True)]
+        )
 
         assert isinstance(content, list)
         assert content[0] == {"type": "text", "text": "look"}
@@ -81,20 +83,26 @@ class TestBuildUserContent:
     def test_unsupported_image_dropped_from_payload(self, tmp_path):
         img = tmp_path / "shot.png"
         img.write_bytes(b"\x89PNG\r\n")
-        content = _build_user_content("look", [_attachment(img, is_image=True, supported=False)])
+        content = _build_user_content(
+            "look", [_attachment(img, is_image=True, supported=False)]
+        )
 
         assert content == [{"type": "text", "text": "look"}]
 
     def test_text_file_inlined_with_header(self, tmp_path):
         f = tmp_path / "notes.md"
         f.write_text("# Hi")
-        content = _build_user_content("read", [_attachment(f, is_image=False, supported=True)])
+        content = _build_user_content(
+            "read", [_attachment(f, is_image=False, supported=True)]
+        )
 
         assert content[1] == {"type": "text", "text": "--- notes.md ---\n# Hi"}
 
     def test_undecodable_file_skipped(self, tmp_path):
         f = tmp_path / "blob.bin"
         f.write_bytes(b"\xff\xfe\x00\x01")
-        content = _build_user_content("read", [_attachment(f, is_image=False, supported=True)])
+        content = _build_user_content(
+            "read", [_attachment(f, is_image=False, supported=True)]
+        )
 
         assert content == [{"type": "text", "text": "read"}]

@@ -28,10 +28,17 @@ def _render_text(renderable, width: int = 200) -> str:
 
 
 def _attachment(
-    name: str = "f.txt", size: int = 1024, is_image: bool = False, supported: bool = True
+    name: str = "f.txt",
+    size: int = 1024,
+    is_image: bool = False,
+    supported: bool = True,
 ) -> Attachment:
     return Attachment(
-        path=f"/tmp/{name}", name=name, size=size, is_image=is_image, supported=supported
+        path=f"/tmp/{name}",
+        name=name,
+        size=size,
+        is_image=is_image,
+        supported=supported,
     )
 
 
