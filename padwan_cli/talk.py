@@ -19,6 +19,7 @@ from padwan_llm import RealtimeClient, RealtimeConnection, RealtimeServerEvent
 from padwan_llm.errors import LLMError
 from padwan_llm.openai.realtime import NO_TURN_DETECTION, REALTIME_SAMPLE_RATE
 
+from .trace import TRACE_BACKENDS, TraceBackend, enable_tracing
 from .utils import console
 
 SR = REALTIME_SAMPLE_RATE  # 24 kHz mono PCM16, as gpt-realtime expects
@@ -317,6 +318,12 @@ async def talk_command(
     check: bool = Option(
         False, "--check", help="List audio devices and key status, then exit"
     ),
+    trace: TraceBackend | None = Option(
+        None,
+        "--trace",
+        help="Export LLM telemetry to this backend",
+        choices=TRACE_BACKENDS,
+    ),
 ) -> None:
     """Talk with a real-time voice assistant (speech-to-speech)."""
     # A live mic/speaker session needs the whole terminal; the Textual TUI owns it,
@@ -342,6 +349,9 @@ async def talk_command(
         console.print(f"OPENAI_API_KEY: {key_status}")
         console.print(f"model={model}  voice={voice}")
         return
+
+    if trace:
+        enable_tracing(trace)
 
     push_to_talk = not hands_free
     if push_to_talk and not sys.stdin.isatty():

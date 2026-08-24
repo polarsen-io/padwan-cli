@@ -21,6 +21,7 @@ padwan-cli chat send "Hello, how are you?" -m gpt-4o-mini
 | `--mcp` | *none* | Streamable-HTTP MCP server URL(s) to expose as tools (space-separated) |
 | `--resume` | *none* | Resume a previous session by ID |
 | `--max-tools-round` | `20` | Maximum number of tool calls per round |
+| `--trace` | *off* | Export LLM telemetry to `langfuse` or `otlp` (needs the matching extra) |
 
 In TUI mode, the command enters an interactive loop — type follow-up messages and press Enter to continue the conversation. Press **Ctrl+C** to exit chat mode. Messages you type while the model is responding are queued and processed in order.
 

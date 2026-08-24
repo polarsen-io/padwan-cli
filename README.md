@@ -43,3 +43,17 @@ Real-time speech-to-speech chat (needs the PortAudio system lib, e.g. `libportau
 uvx --from "padwan-cli[voice]" padwan-talk
 ```
 
+## Tracing
+
+Pass `--trace <backend>` (on the one-shot, `chat send`, and `talk` commands) to instrument all LLM calls with [padwan-llm's OTel GenAI telemetry](https://github.com/polarsen-io/padwan-llm/blob/master/docs/observability.md):
+
+```bash
+# Langfuse, using the standard LANGFUSE_* env vars
+export LANGFUSE_PUBLIC_KEY=... LANGFUSE_SECRET_KEY=... LANGFUSE_BASE_URL=...
+uvx --from "padwan-cli[langfuse]" padwan-cli "Hello" --trace langfuse
+
+# any OTLP collector, using the standard OTEL_EXPORTER_OTLP_* env vars
+OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
+  uvx --from "padwan-cli[otel]" padwan-cli "Hello" --trace otlp
+```
+

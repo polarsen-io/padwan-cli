@@ -29,6 +29,7 @@ from padwan_llm import (
 from padwan_llm.content import AudioFormat
 from padwan_llm.gemini import GeminiClient
 from padwan_llm.gemini.models import ThinkingConfig
+from .trace import TRACE_BACKENDS, TraceBackend, enable_tracing
 from .utils import ALL_MODELS, console
 from .widgets import (
     Attachment,
@@ -190,6 +191,12 @@ async def chat_send_fn(
         "--mcp",
         help=f"Streamable-HTTP MCP server URL(s) to expose as tools (e.g. {DATAGOUV_MCP_URL})",
     ),
+    trace: TraceBackend | None = Option(
+        None,
+        "--trace",
+        help="Export LLM telemetry to this backend",
+        choices=TRACE_BACKENDS,
+    ),
     ctx: TuiContext = TuiOption(),
 ) -> None:
     """Start a conversation. Use Ctrl+C to exit."""
@@ -245,6 +252,9 @@ async def chat_send_fn(
     parsed_extra, ok = _parse_extra_params(extra_params)
     if not ok:
         return
+
+    if trace:
+        enable_tracing(trace)
 
     try:
         client = LLMClient(model=model, on_thought=_on_thought, base_url=base_url)

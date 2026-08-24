@@ -25,6 +25,7 @@ from .utils import console
 from .batch import batch_group
 from .chat import chat_group
 from .talk import talk_command
+from .trace import TRACE_BACKENDS, TraceBackend, enable_tracing
 
 CUSTOM_CSS = """
 Rule.chat-mode {
@@ -127,6 +128,12 @@ async def oneshot(
         "--stream-thinking",
         help="Stream model reasoning/thinking tokens to stderr (requires --stream)",
     ),
+    trace: TraceBackend | None = Option(
+        None,
+        "--trace",
+        help="Export LLM telemetry to this backend",
+        choices=TRACE_BACKENDS,
+    ),
 ) -> None:
     """Send a single prompt and print the response."""
     parsed_extra: dict[str, Any] | None = None
@@ -145,6 +152,9 @@ async def oneshot(
         sys.stderr.flush()
 
     on_thought: OnThought | None = _thought_streamer if stream_thinking else None
+
+    if trace:
+        enable_tracing(trace)
 
     client = LLMClient(model=model, base_url=base_url, on_thought=on_thought)
     messages: list[Message] = [Message(role="user", content=prompt)]
