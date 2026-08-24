@@ -50,9 +50,13 @@ the queued attachments.
 - **Text files** (code, Markdown, JSON, …) are read and inlined into your message,
   so they work with any model.
 - **Images** are sent to the model as image input — this requires a vision-capable
-  model (e.g. `gpt-4o`, `gemini-2.5-flash`, `pixtral-large-latest`). If the active
-  model can't see images, the chip is marked `⚠ needs a vision model` and the image
-  is left out of the request (switch models with `-m`).
+  model (e.g. `gpt-4o`, `gemini-2.5-flash`, `pixtral-large-latest`).
+- **Audio files** (wav, mp3, flac, ogg, aac, aiff, m4a) are sent as audio input —
+  this requires an audio-capable model, and format support varies per provider.
+
+If the active model can't consume an attachment, its chip turns amber, a warning
+explains what will be skipped, and the file is left out of the request (switch
+models with `-m`).
 
 You need to type at least a short message to send; dropping a file alone won't send.
 Drag-and-drop is a TUI-only feature.

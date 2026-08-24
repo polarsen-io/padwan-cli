@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from pathlib import Path
 
 import pytest
 from textual.app import App, ComposeResult
@@ -10,6 +11,7 @@ from padwan_cli.widgets import (
     USER_COLOR,
     Attachment,
     AttachmentBadge,
+    AttachmentKind,
     BatchProgressWidget,
     BatchResultWidget,
     UserMessage,
@@ -30,14 +32,14 @@ def _render_text(renderable, width: int = 200) -> str:
 def _attachment(
     name: str = "f.txt",
     size: int = 1024,
-    is_image: bool = False,
+    kind: AttachmentKind = "text",
     supported: bool = True,
 ) -> Attachment:
     return Attachment(
-        path=f"/tmp/{name}",
+        path=Path(f"/tmp/{name}"),
         name=name,
         size=size,
-        is_image=is_image,
+        kind=kind,
         supported=supported,
     )
 
@@ -188,7 +190,7 @@ class TestRenderAttachments:
     def test_warning_line_above_chips(self):
         text = _render_text(
             render_attachments(
-                [_attachment(name="x.png", is_image=True, supported=False)],
+                [_attachment(name="x.png", kind="image", supported=False)],
                 warning="gpt-x can't read images — 1 will be skipped",
             )
         )
@@ -212,7 +214,7 @@ class TestAttachmentBadge:
     async def test_shows_vision_warning(self):
         app = WidgetApp(
             lambda: AttachmentBadge(
-                [_attachment(name="img.png", is_image=True, supported=False)],
+                [_attachment(name="img.png", kind="image", supported=False)],
                 warning="gpt-x can't read images — 1 skipped",
             )
         )

@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Literal, cast
 
 from rich import box
 from rich.columns import Columns
@@ -29,6 +29,9 @@ CHIP_BG = "#1f2230"
 CHIP_BORDER = "#3a3f55"
 
 
+AttachmentKind = Literal["image", "audio", "text"]
+
+
 @dataclass
 class Attachment:
     """A file dropped into the chat, queued to send with the next message."""
@@ -36,8 +39,8 @@ class Attachment:
     path: Path
     name: str
     size: int
-    is_image: bool
-    supported: bool  # whether the active model can use it (images need vision)
+    kind: AttachmentKind
+    supported: bool  # whether the active model can use it (images/audio need support)
 
 
 def human_size(num_bytes: int) -> str:

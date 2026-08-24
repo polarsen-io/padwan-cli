@@ -4,7 +4,7 @@ import mimetypes
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any
+from typing import Any, cast, get_args
 
 from piou import Option, CommandGroup
 from piou.tui import PromptStyle, TuiContext, TuiOption
@@ -19,17 +19,21 @@ from padwan_llm import (
     McpTool,
     McpTransport,
     ToolCallContext,
+    audio_part,
     image_part,
+    supports_audio,
     supports_vision,
     text_file_part,
     text_part,
 )
+from padwan_llm.content import AudioFormat
 from padwan_llm.gemini import GeminiClient
 from padwan_llm.gemini.models import ThinkingConfig
 from .utils import ALL_MODELS, console
 from .widgets import (
     Attachment,
     AttachmentBadge,
+    AttachmentKind,
     ErrorMessage,
     StreamingMessage,
     ThoughtMessage,
@@ -95,15 +99,37 @@ def _format_tokens(session: AgentSession, ctx: TuiContext | None = None) -> str:
     return " ".join(parts)
 
 
+_AUDIO_FORMATS: tuple[AudioFormat, ...] = get_args(AudioFormat)
+_KIND_LABELS = {"image": "images", "audio": "audio", "text": "files"}
+
+
+def _audio_fmt(path: Path) -> AudioFormat | None:
+    """Derive the audio format from the file extension, if it is a known one."""
+    fmt = path.suffix.removeprefix(".").lower()
+    return cast(AudioFormat, fmt) if fmt in _AUDIO_FORMATS else None
+
+
+def _unsupported_warning(
+    model: str, attachments: list[Attachment], *, suffix: str
+) -> str | None:
+    """Amber warning line for attachments the model can't consume, or None."""
+    skipped = [a for a in attachments if not a.supported]
+    if not skipped:
+        return None
+    kinds = "/".join(dict.fromkeys(_KIND_LABELS[a.kind] for a in skipped))
+    return f"{model} can't read {kinds} — {len(skipped)} {suffix}"
+
+
 def _build_user_content(
     text: str, attachments: list[Attachment]
 ) -> str | list[ContentPart]:
     """Assemble the user turn from typed text and queued attachments.
 
     Returns the plain string when nothing is attached. Otherwise builds content
-    parts: the text, each text file inlined, and each supported image as a data
-    URL. Unsupported images (text-only model) and unreadable files are dropped
-    from the payload — they still appear in the sent badge.
+    parts: the text, each text file inlined, and each supported image or audio
+    file as a data payload. Unsupported media (model can't see/hear it) and
+    unreadable files are dropped from the payload — they still appear in the
+    sent badge.
     """
     if not attachments:
         return text
@@ -111,9 +137,15 @@ def _build_user_content(
     if text:
         parts.append(text_part(text))
     for a in attachments:
-        if a.is_image:
-            if a.supported:
-                parts.append(image_part(a.path))
+        if not a.supported:
+            continue
+        if a.kind == "image":
+            parts.append(image_part(a.path))
+        elif a.kind == "audio":
+            try:
+                parts.append(audio_part(a.path))
+            except OSError, ValueError:
+                continue
         else:
             try:
                 parts.append(text_file_part(a.path))
@@ -261,24 +293,26 @@ async def chat_send_fn(
                         size = p.stat().st_size
                     except OSError:
                         continue
-                    is_image = (mimetypes.guess_type(p)[0] or "").startswith("image/")
+                    mime = mimetypes.guess_type(p)[0] or ""
+                    kind: AttachmentKind
+                    if mime.startswith("image/"):
+                        kind, supported = "image", supports_vision(model)
+                    elif mime.startswith("audio/"):
+                        kind, supported = "audio", supports_audio(model, _audio_fmt(p))
+                    else:
+                        kind, supported = "text", True
                     pending.append(
                         Attachment(
                             path=p,
                             name=p.name,
                             size=size,
-                            is_image=is_image,
-                            supported=(not is_image) or supports_vision(model),
+                            kind=kind,
+                            supported=supported,
                         )
                     )
-                blind = [a for a in pending if a.is_image and not a.supported]
-                warning = (
-                    f"{model} can't read images — {len(blind)} will be skipped"
-                    if blind
-                    else None
-                )
+                warning = _unsupported_warning(model, pending, suffix="will be skipped")
                 ctx.set_attachments(render_attachments(pending, warning=warning))
-                _set_attach_warning(bool(blind))
+                _set_attach_warning(warning is not None)
                 ctx.set_hint(
                     f"{len(pending)} attached — type a message · Ctrl+U clears"
                 )
@@ -298,13 +332,8 @@ async def chat_send_fn(
                         sent = list(pending)
                         ctx.mount_widget(UserMessage(user_input))
                         if sent:
-                            skipped = [
-                                a for a in sent if a.is_image and not a.supported
-                            ]
-                            badge_warning = (
-                                f"{model} can't read images — {len(skipped)} skipped"
-                                if skipped
-                                else None
+                            badge_warning = _unsupported_warning(
+                                model, sent, suffix="skipped"
                             )
                             ctx.mount_widget(
                                 AttachmentBadge(sent, warning=badge_warning)
