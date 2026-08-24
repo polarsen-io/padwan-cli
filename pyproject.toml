@@ -16,6 +16,14 @@ dependencies = [
 [project.optional-dependencies]
 # `talk` command audio I/O; also needs the PortAudio system lib (libportaudio2).
 voice = ["sounddevice>=0.5"]
+# `--trace otlp`: OTel instrumentation with an OTLP exporter.
+otel = [
+    "padwan-llm[otel]>=0.9.0",
+    "opentelemetry-sdk>=1.44",
+    "opentelemetry-exporter-otlp>=1.44",
+]
+# `--trace langfuse`: OTel instrumentation with the Langfuse adapter.
+langfuse = ["padwan-llm[langfuse]>=0.9.0"]
 
 [project.scripts]
 padwan-cli = "padwan_cli:main_tui"
@@ -36,6 +44,10 @@ dev = [
     "pytest-asyncio>=1.3.0",
     "pytest-cov>=7.0.0",
     "ruff>=0.11.0",
+    # keep the otel and langfuse extras type-checkable/testable in dev
+    "padwan-llm[langfuse]>=0.9.0",
+    "opentelemetry-sdk>=1.44",
+    "opentelemetry-exporter-otlp>=1.44",
 ]
 docs = [
     "zensical>=0.0.31",
