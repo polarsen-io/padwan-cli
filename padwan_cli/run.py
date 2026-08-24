@@ -10,6 +10,7 @@ from piou.tui import get_tui_context
 from rich.table import Table
 
 from padwan_llm import (
+    ANTHROPIC_MODELS,
     GEMINI_MODELS,
     GROK_MODELS,
     MISTRAL_MODELS,
@@ -64,6 +65,8 @@ def list_models(
         provider_models["Mistral"] = list(MISTRAL_MODELS)
     if not provider or provider == "grok":
         provider_models["Grok"] = list(GROK_MODELS)
+    if not provider or provider == "anthropic":
+        provider_models["Anthropic"] = list(ANTHROPIC_MODELS)
 
     if not provider_models:
         console.print(f"[red]Unknown provider: {provider}[/red]")
@@ -91,9 +94,14 @@ def info() -> None:
     table.add_row("Gemini", str(len(GEMINI_MODELS)))
     table.add_row("Mistral", str(len(MISTRAL_MODELS)))
     table.add_row("Grok", str(len(GROK_MODELS)))
+    table.add_row("Anthropic", str(len(ANTHROPIC_MODELS)))
 
     total = (
-        len(OPENAI_MODELS) + len(GEMINI_MODELS) + len(MISTRAL_MODELS) + len(GROK_MODELS)
+        len(OPENAI_MODELS)
+        + len(GEMINI_MODELS)
+        + len(MISTRAL_MODELS)
+        + len(GROK_MODELS)
+        + len(ANTHROPIC_MODELS)
     )
     table.add_section()
     table.add_row("[bold]Total[/bold]", f"[bold]{total}[/bold]")

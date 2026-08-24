@@ -1,7 +1,7 @@
 # Padwan CLI
 
 Padwan CLI is an interactive CLI and TUI for [padwan-llm](https://github.com/Polarsen/padwan-llm), the unified LLM client library. 
-It provides a terminal interface for querying multiple LLM providers — OpenAI, Gemini, Mistral, and Grok — through a single tool.
+It provides a terminal interface for querying multiple LLM providers — OpenAI, Gemini, Mistral, Grok, and Anthropic — through a single tool.
 
 !!! note "Playground project"
     This is a playground for experimenting with `padwan-llm` features (streaming, agents, MCP, thinking tokens, batch jobs, realtime voice) — not a production-grade tool. Expect rough edges and breaking changes.
