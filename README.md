@@ -33,6 +33,9 @@ uv run padwan-cli
 
 ```bash
 uvx padwan-cli "Hello" -m gpt-4o-mini
+
+# attach files (images/audio/text, routed by type)
+uvx padwan-cli "What's in this recording?" -m gpt-4o-audio-preview -f clip.mp3
 ```
 
 ## Voice Mode

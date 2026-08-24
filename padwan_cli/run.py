@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+from pathlib import Path
 from typing import Any
 
 from piou import Cli, Option
@@ -15,7 +16,9 @@ from padwan_llm import (
     GROK_MODELS,
     MISTRAL_MODELS,
     OPENAI_MODELS,
+    ContentPart,
     LLMClient,
+    content_parts,
 )
 from padwan_llm._base import OnThought
 from padwan_llm.conversation import Message
@@ -128,6 +131,12 @@ async def oneshot(
         "--stream-thinking",
         help="Stream model reasoning/thinking tokens to stderr (requires --stream)",
     ),
+    files: list[Path] | None = Option(
+        None,
+        "-f",
+        "--file",
+        help="Attach file(s) to the prompt (images/audio/text, routed by type)",
+    ),
     trace: TraceBackend | None = Option(
         None,
         "--trace",
@@ -156,8 +165,16 @@ async def oneshot(
     if trace:
         enable_tracing(trace)
 
+    content: str | list[ContentPart] = prompt
+    if files:
+        try:
+            content = content_parts(prompt, *files)
+        except (OSError, ValueError) as e:
+            console.print(f"[red]--file: {e}[/red]")
+            raise SystemExit(1)
+
     client = LLMClient(model=model, base_url=base_url, on_thought=on_thought)
-    messages: list[Message] = [Message(role="user", content=prompt)]
+    messages: list[Message] = [Message(role="user", content=content)]
     async with client:
         if stream:
             async for chunk in client.stream_chat(messages, extra_params=parsed_extra):
