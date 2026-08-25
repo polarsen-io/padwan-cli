@@ -26,6 +26,7 @@ python -m padwan_cli talk
 | `--instructions` | *built-in* | System prompt for the voice assistant |
 | `--hands-free` | *off* | Auto voice detection instead of push-to-talk |
 | `--check` | *off* | List audio devices and key status, then exit |
+| `--trace` | *off* | Export LLM telemetry to `langfuse` or `otlp` (needs the matching extra) |
 
 ## Push-to-talk vs hands-free
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+from pathlib import Path
 from typing import Any
 
 from piou import Cli, Option
@@ -10,11 +11,14 @@ from piou.tui import get_tui_context
 from rich.table import Table
 
 from padwan_llm import (
+    ANTHROPIC_MODELS,
     GEMINI_MODELS,
     GROK_MODELS,
     MISTRAL_MODELS,
     OPENAI_MODELS,
+    ContentPart,
     LLMClient,
+    content_parts,
 )
 from padwan_llm._base import OnThought
 from padwan_llm.conversation import Message
@@ -24,6 +28,7 @@ from .utils import console
 from .batch import batch_group
 from .chat import chat_group
 from .talk import talk_command
+from .trace import TRACE_BACKENDS, TraceBackend, enable_tracing
 
 CUSTOM_CSS = """
 Rule.chat-mode {
@@ -64,6 +69,8 @@ def list_models(
         provider_models["Mistral"] = list(MISTRAL_MODELS)
     if not provider or provider == "grok":
         provider_models["Grok"] = list(GROK_MODELS)
+    if not provider or provider == "anthropic":
+        provider_models["Anthropic"] = list(ANTHROPIC_MODELS)
 
     if not provider_models:
         console.print(f"[red]Unknown provider: {provider}[/red]")
@@ -91,9 +98,14 @@ def info() -> None:
     table.add_row("Gemini", str(len(GEMINI_MODELS)))
     table.add_row("Mistral", str(len(MISTRAL_MODELS)))
     table.add_row("Grok", str(len(GROK_MODELS)))
+    table.add_row("Anthropic", str(len(ANTHROPIC_MODELS)))
 
     total = (
-        len(OPENAI_MODELS) + len(GEMINI_MODELS) + len(MISTRAL_MODELS) + len(GROK_MODELS)
+        len(OPENAI_MODELS)
+        + len(GEMINI_MODELS)
+        + len(MISTRAL_MODELS)
+        + len(GROK_MODELS)
+        + len(ANTHROPIC_MODELS)
     )
     table.add_section()
     table.add_row("[bold]Total[/bold]", f"[bold]{total}[/bold]")
@@ -119,6 +131,18 @@ async def oneshot(
         "--stream-thinking",
         help="Stream model reasoning/thinking tokens to stderr (requires --stream)",
     ),
+    files: list[Path] | None = Option(
+        None,
+        "-f",
+        "--file",
+        help="Attach file(s) to the prompt (images/audio/text, routed by type)",
+    ),
+    trace: TraceBackend | None = Option(
+        None,
+        "--trace",
+        help="Export LLM telemetry to this backend",
+        choices=TRACE_BACKENDS,
+    ),
 ) -> None:
     """Send a single prompt and print the response."""
     parsed_extra: dict[str, Any] | None = None
@@ -138,8 +162,19 @@ async def oneshot(
 
     on_thought: OnThought | None = _thought_streamer if stream_thinking else None
 
+    if trace:
+        enable_tracing(trace)
+
+    content: str | list[ContentPart] = prompt
+    if files:
+        try:
+            content = content_parts(prompt, *files)
+        except (OSError, ValueError) as e:
+            console.print(f"[red]--file: {e}[/red]")
+            raise SystemExit(1)
+
     client = LLMClient(model=model, base_url=base_url, on_thought=on_thought)
-    messages: list[Message] = [Message(role="user", content=prompt)]
+    messages: list[Message] = [Message(role="user", content=content)]
     async with client:
         if stream:
             async for chunk in client.stream_chat(messages, extra_params=parsed_extra):

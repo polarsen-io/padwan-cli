@@ -21,6 +21,7 @@ padwan-cli chat send "Hello, how are you?" -m gpt-4o-mini
 | `--mcp` | *none* | Streamable-HTTP MCP server URL(s) to expose as tools (space-separated) |
 | `--resume` | *none* | Resume a previous session by ID |
 | `--max-tools-round` | `20` | Maximum number of tool calls per round |
+| `--trace` | *off* | Export LLM telemetry to `langfuse` or `otlp` (needs the matching extra) |
 
 In TUI mode, the command enters an interactive loop — type follow-up messages and press Enter to continue the conversation. Press **Ctrl+C** to exit chat mode. Messages you type while the model is responding are queued and processed in order.
 
@@ -50,9 +51,13 @@ the queued attachments.
 - **Text files** (code, Markdown, JSON, …) are read and inlined into your message,
   so they work with any model.
 - **Images** are sent to the model as image input — this requires a vision-capable
-  model (e.g. `gpt-4o`, `gemini-2.5-flash`, `pixtral-large-latest`). If the active
-  model can't see images, the chip is marked `⚠ needs a vision model` and the image
-  is left out of the request (switch models with `-m`).
+  model (e.g. `gpt-4o`, `gemini-2.5-flash`, `pixtral-large-latest`).
+- **Audio files** (wav, mp3, flac, ogg, aac, aiff, m4a) are sent as audio input —
+  this requires an audio-capable model, and format support varies per provider.
+
+If the active model can't consume an attachment, its chip turns amber, a warning
+explains what will be skipped, and the file is left out of the request (switch
+models with `-m`).
 
 You need to type at least a short message to send; dropping a file alone won't send.
 Drag-and-drop is a TUI-only feature.

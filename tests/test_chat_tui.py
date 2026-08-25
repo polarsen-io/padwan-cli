@@ -37,14 +37,14 @@ class TestChatTuiAttachments:
         app = _app()
         async with app.run_test() as pilot:
             # Mirror the chat command's drop handler over the real framework path.
-            def on_drop(paths: list[str]) -> None:
+            def on_drop(paths: list[Path]) -> None:
                 for p in paths:
                     pending.append(
                         Attachment(
                             path=p,
-                            name=Path(p).name,
-                            size=Path(p).stat().st_size,
-                            is_image=False,
+                            name=p.name,
+                            size=p.stat().st_size,
+                            kind="text",
                             supported=True,
                         )
                     )
