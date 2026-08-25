@@ -1,3 +1,13 @@
+## 0.6.0 (2026-08-25)
+
+### Feat
+
+- one-shot -f/--file attachments routed by content type
+- wire --trace into chat, talk, and the one-shot command
+- **chat**: audio file attachments gated by supports_audio
+- list Anthropic models in models, info, and model choices
+- opt-in tracing (Langfuse or OTLP export)
+
 ## 0.5.0 (2026-08-19)
 
 ### Feat

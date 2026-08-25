@@ -1,6 +1,6 @@
 [project]
 name = "padwan-cli"
-version = "0.5.0"
+version = "0.6.0"
 description = "CLI and TUI for padwan-llm"
 readme = "README.md"
 authors = [
