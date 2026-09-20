@@ -10,7 +10,7 @@ from piou.tui import get_tui_context
 
 from rich.table import Table
 
-from padwan_llm import (
+from padwan_ai import (
     ANTHROPIC_MODELS,
     GEMINI_MODELS,
     GROK_MODELS,
@@ -20,9 +20,9 @@ from padwan_llm import (
     LLMClient,
     content_parts,
 )
-from padwan_llm._base import OnThought
-from padwan_llm.conversation import Message
-from padwan_llm.errors import Provider
+from padwan_ai._base import OnThought
+from padwan_ai.conversation import Message
+from padwan_ai.errors import Provider
 
 from .utils import console
 from .batch import batch_group

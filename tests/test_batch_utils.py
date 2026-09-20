@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from padwan_llm.gemini import BatchResult
+from padwan_ai.gemini import BatchResult
 
 from padwan_cli.batch.utils import load_prompts_from_file, save_results_to_file
 

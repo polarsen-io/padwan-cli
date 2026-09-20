@@ -634,23 +634,49 @@ wheels = [
 ]
 
 [[package]]
+name = "padwan-ai"
+version = "0.12.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "niquests" },
+    { name = "qh3" },
+    { name = "urllib3-future" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bc/eb/3333560a9d7e71f8b95746a4d70a026bbf1ca15797ef79439655131f3131/padwan_ai-0.12.0.tar.gz", hash = "sha256:4bae3d4e0eca28949852b0aa2622cb2884c553a6245428d7ed249cff1851d5d8", size = 99959, upload-time = "2026-09-20T19:39:32.896Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ec/52/ceddc8e6e2d0b2ba7760f9eaf69306ec0d33b97d8f83242ea2d09b6f06e6/padwan_ai-0.12.0-py3-none-any.whl", hash = "sha256:0126546f2555eecee8efbbd367317185b4ec60109fd1ee156f73973a965db06b", size = 125236, upload-time = "2026-09-20T19:39:31.865Z" },
+]
+
+[package.optional-dependencies]
+langfuse = [
+    { name = "langfuse" },
+    { name = "opentelemetry-api" },
+]
+otel = [
+    { name = "opentelemetry-api" },
+]
+realtime = [
+    { name = "niquests", extra = ["ws"] },
+]
+
+[[package]]
 name = "padwan-cli"
-version = "0.5.0"
+version = "0.6.0"
 source = { editable = "." }
 dependencies = [
-    { name = "padwan-llm", extra = ["realtime"] },
+    { name = "padwan-ai", extra = ["realtime"] },
     { name = "piou", extra = ["tui"] },
     { name = "tracktolib" },
 ]
 
 [package.optional-dependencies]
 langfuse = [
-    { name = "padwan-llm", extra = ["langfuse"] },
+    { name = "padwan-ai", extra = ["langfuse"] },
 ]
 otel = [
     { name = "opentelemetry-exporter-otlp" },
     { name = "opentelemetry-sdk" },
-    { name = "padwan-llm", extra = ["otel"] },
+    { name = "padwan-ai", extra = ["otel"] },
 ]
 voice = [
     { name = "sounddevice" },
@@ -663,7 +689,7 @@ bump = [
 dev = [
     { name = "opentelemetry-exporter-otlp" },
     { name = "opentelemetry-sdk" },
-    { name = "padwan-llm", extra = ["langfuse"] },
+    { name = "padwan-ai", extra = ["langfuse"] },
     { name = "piou", extra = ["tui-reload"] },
     { name = "pyright" },
     { name = "pytest" },
@@ -679,9 +705,9 @@ docs = [
 requires-dist = [
     { name = "opentelemetry-exporter-otlp", marker = "extra == 'otel'", specifier = ">=1.44" },
     { name = "opentelemetry-sdk", marker = "extra == 'otel'", specifier = ">=1.44" },
-    { name = "padwan-llm", extras = ["langfuse"], marker = "extra == 'langfuse'", specifier = ">=0.9.0" },
-    { name = "padwan-llm", extras = ["otel"], marker = "extra == 'otel'", specifier = ">=0.9.0" },
-    { name = "padwan-llm", extras = ["realtime"], specifier = ">=0.9.0" },
+    { name = "padwan-ai", extras = ["langfuse"], marker = "extra == 'langfuse'", specifier = ">=0.11.1" },
+    { name = "padwan-ai", extras = ["otel"], marker = "extra == 'otel'", specifier = ">=0.11.1" },
+    { name = "padwan-ai", extras = ["realtime"], specifier = ">=0.11.1" },
     { name = "piou", extras = ["tui"], specifier = ">=0.36.0" },
     { name = "sounddevice", marker = "extra == 'voice'", specifier = ">=0.5" },
     { name = "tracktolib", specifier = ">=0.74.0" },
@@ -693,7 +719,7 @@ bump = [{ name = "commitizen", specifier = ">=4.0.0" }]
 dev = [
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.44" },
     { name = "opentelemetry-sdk", specifier = ">=1.44" },
-    { name = "padwan-llm", extras = ["langfuse"], specifier = ">=0.9.0" },
+    { name = "padwan-ai", extras = ["langfuse"], specifier = ">=0.11.1" },
     { name = "piou", extras = ["tui-reload"], specifier = ">=0.36.0" },
     { name = "pyright", specifier = ">=1.1.408" },
     { name = "pytest", specifier = ">=8.0.0" },
@@ -702,32 +728,6 @@ dev = [
     { name = "ruff", specifier = ">=0.11.0" },
 ]
 docs = [{ name = "zensical", specifier = ">=0.0.31" }]
-
-[[package]]
-name = "padwan-llm"
-version = "0.9.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "niquests" },
-    { name = "qh3" },
-    { name = "urllib3-future" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/39/c7/3946f8991fcd3d707654b29e125520a8323bd5fd234b1a05c4104393fbc6/padwan_llm-0.9.0.tar.gz", hash = "sha256:4f35398b761189565c58b20a3c1d05ae3f130579635cae802b1c16fa4e03a5a9", size = 86704, upload-time = "2026-08-23T06:15:57.423Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/1d/25/116528f173a63a2593e3c4b50dcb25c46860981bb7cae9f26002ed307075/padwan_llm-0.9.0-py3-none-any.whl", hash = "sha256:903d11d7c17a052cf306a68250309d4026b057fbb56505d877dc4fa44a65cdf7", size = 108952, upload-time = "2026-08-23T06:15:56.272Z" },
-]
-
-[package.optional-dependencies]
-langfuse = [
-    { name = "langfuse" },
-    { name = "opentelemetry-api" },
-]
-otel = [
-    { name = "opentelemetry-api" },
-]
-realtime = [
-    { name = "niquests", extra = ["ws"] },
-]
 
 [[package]]
 name = "piou"
@@ -1199,16 +1199,16 @@ wheels = [
 
 [[package]]
 name = "urllib3-future"
-version = "2.19.913"
+version = "2.24.908"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "h11" },
     { name = "jh2" },
     { name = "qh3", marker = "(platform_machine == 'AMD64' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 'ARM64' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 'arm64' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 'armv7l' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 'i686' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 'ppc64' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 'ppc64le' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 'riscv64' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 'riscv64gc' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 's390x' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 'x86' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and platform_python_implementation == 'CPython' and sys_platform == 'darwin') or (platform_machine == 'AMD64' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 'ARM64' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 'arm64' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 'armv7l' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 'i686' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 'ppc64' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 'ppc64le' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 'riscv64' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 'riscv64gc' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 's390x' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 'x86' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 'x86_64' and platform_python_implementation == 'CPython' and sys_platform == 'linux') or (platform_machine == 'AMD64' and platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_machine == 'ARM64' and platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_machine == 'arm64' and platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_machine == 'armv7l' and platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_machine == 'i686' and platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_machine == 'ppc64' and platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_machine == 'ppc64le' and platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_machine == 'riscv64' and platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_machine == 'riscv64gc' and platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_machine == 's390x' and platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_machine == 'x86' and platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_machine == 'x86_64' and platform_python_implementation == 'CPython' and sys_platform == 'win32')" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/19/ff/e63c0c73a3f3612fd9785015544216becb9976cadfe91e4346ea2ac13ecc/urllib3_future-2.19.913.tar.gz", hash = "sha256:42d7cdfbac989204e5f77b028b5e40cc18f48d0f858479355ce01a9cf1685279", size = 1240720, upload-time = "2026-04-27T05:33:03.678Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c1/3c/5030e2ba5a2ee073f01afd1b63a450248084ab25d74e9caddd46ce9470ae/urllib3_future-2.24.908.tar.gz", hash = "sha256:6415493c7222a8fe353d27fa8921958c373401121dd58038dfd8e17301e004ae", size = 1390348, upload-time = "2026-09-08T07:33:37.307Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7a/0a/38a6bc3788eafc6a55ad53d27938644880927a9486fd58fbab1943d593f4/urllib3_future-2.19.913-py3-none-any.whl", hash = "sha256:a2d92dfd354d2ad737a1dfac13addea67fb9973893f0572ffee467c96e2bd22e", size = 731291, upload-time = "2026-04-27T05:33:01.648Z" },
+    { url = "https://files.pythonhosted.org/packages/1d/41/6bc911bafc7612ac0fbec17a10edda801c09b44cc9c0571b30cce6b7c156/urllib3_future-2.24.908-py3-none-any.whl", hash = "sha256:85081f32840cb4ed1b90c44e50f316b7dd6f47abe6dabbbd3f591921e9c724f2", size = 820384, upload-time = "2026-09-08T07:33:35.335Z" },
 ]
 
 [package.optional-dependencies]

@@ -26,7 +26,7 @@ pip install "padwan-cli[voice]"
 ## Local development
 
 ```bash
-git clone https://github.com/Polarsen/padwan-llm.git
+git clone https://github.com/Polarsen/padwan-ai.git
 git clone https://github.com/Polarsen/padwan-cli.git
 cd padwan-cli
 uv sync --group dev

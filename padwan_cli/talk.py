@@ -15,9 +15,9 @@ from piou import Option
 from piou.tui import get_tui_context
 from tracktolib.utils import BytesBuffer
 
-from padwan_llm import RealtimeClient, RealtimeConnection, RealtimeServerEvent
-from padwan_llm.errors import LLMError
-from padwan_llm.openai.realtime import NO_TURN_DETECTION, REALTIME_SAMPLE_RATE
+from padwan_ai import RealtimeClient, RealtimeConnection, RealtimeServerEvent
+from padwan_ai.errors import LLMError
+from padwan_ai.openai.realtime import NO_TURN_DETECTION, REALTIME_SAMPLE_RATE
 
 from .trace import TRACE_BACKENDS, TraceBackend, enable_tracing
 from .utils import console

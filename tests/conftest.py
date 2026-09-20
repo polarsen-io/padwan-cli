@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from padwan_llm.gemini import BatchResult
+from padwan_ai.gemini import BatchResult
 
 
 @dataclass

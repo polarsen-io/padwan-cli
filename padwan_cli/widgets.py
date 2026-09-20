@@ -15,7 +15,7 @@ from textual.widgets import Static
 from piou.tui import StreamingMessage as _StreamingMessage
 
 if TYPE_CHECKING:
-    from padwan_llm.gemini import BatchJob, BatchResult
+    from padwan_ai.gemini import BatchJob, BatchResult
 
 # Colors for chat messages
 USER_COLOR = "#87ceeb"

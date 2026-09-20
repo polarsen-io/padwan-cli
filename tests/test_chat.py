@@ -3,8 +3,8 @@ from typing import cast
 
 import pytest
 
-from padwan_llm import AgentSession, LLMClientBase
-from padwan_llm.models import UsageToken
+from padwan_ai import AgentSession, LLMClientBase
+from padwan_ai.models import UsageToken
 
 from padwan_cli.chat import _build_user_content, _format_tokens, _unsupported_warning
 from padwan_cli.widgets import Attachment, AttachmentKind

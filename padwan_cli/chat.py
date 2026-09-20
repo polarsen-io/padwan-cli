@@ -10,7 +10,7 @@ from piou import Option, CommandGroup
 from piou.tui import PromptStyle, TuiContext, TuiOption
 from textual.css.query import NoMatches
 
-from padwan_llm import (
+from padwan_ai import (
     AgentSession,
     ContentPart,
     ConversationSnapshot,
@@ -26,9 +26,9 @@ from padwan_llm import (
     text_file_part,
     text_part,
 )
-from padwan_llm.content import AudioFormat
-from padwan_llm.gemini import GeminiClient
-from padwan_llm.gemini.models import ThinkingConfig
+from padwan_ai.content import AudioFormat
+from padwan_ai.gemini import GeminiClient
+from padwan_ai.gemini.models import ThinkingConfig
 from .trace import TRACE_BACKENDS, TraceBackend, enable_tracing
 from .utils import ALL_MODELS, console
 from .widgets import (
@@ -52,7 +52,7 @@ DATAGOUV_MCP_URL = "https://mcp.data.gouv.fr/mcp"
 class _InMemoryStore:
     """ConversationStore keeping snapshots in memory across /chat:send calls.
 
-    Implements the `padwan_llm.ConversationStore` protocol so that
+    Implements the `padwan_ai.ConversationStore` protocol so that
     `AgentSession.load` / `AgentSession.save` transparently preserve chat
     history across successive command invocations within the same TUI run.
     """
@@ -369,7 +369,7 @@ async def chat_send_fn(
                         except Exception as e:
                             # Surface the error inline: the outer handler is
                             # only reached after session teardown, which can
-                            # hang on the MCP listener (see padwan-llm mcp.py).
+                            # hang on the MCP listener (see padwan-ai mcp.py).
                             ctx.mount_widget(ErrorMessage(str(e)))
                             needs_new_text_widget = True
                         ctx.set_silent_queue(False)

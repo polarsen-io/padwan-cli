@@ -1,9 +1,9 @@
 # Padwan CLI
 
-Interactive CLI/TUI for [`padwan-llm`](https://github.com/polarsen-io/padwan-llm).
+Interactive CLI/TUI for [`padwan-ai`](https://github.com/polarsen-io/padwan-ai).
 
 > [!NOTE]
-> This is a playground for experimenting with `padwan-llm` features (streaming, agents, MCP, thinking tokens, batch jobs, realtime voice) — not a production-grade tool. Expect rough edges and breaking changes.
+> This is a playground for experimenting with `padwan-ai` features (streaming, agents, MCP, thinking tokens, batch jobs, realtime voice) — not a production-grade tool. Expect rough edges and breaking changes.
 
 <img alt="Chat demo" src="https://github.com/polarsen-io/padwan-cli/raw/master/docs/static/chat.gif" width="800"/>
 
@@ -48,7 +48,7 @@ uvx --from "padwan-cli[voice]" padwan-talk
 
 ## Tracing
 
-Pass `--trace <backend>` (on the one-shot, `chat send`, and `talk` commands) to instrument all LLM calls with [padwan-llm's OTel GenAI telemetry](https://github.com/polarsen-io/padwan-llm/blob/master/docs/observability.md):
+Pass `--trace <backend>` (on the one-shot, `chat send`, and `talk` commands) to instrument all LLM calls with [padwan-ai's OTel GenAI telemetry](https://github.com/polarsen-io/padwan-ai/blob/master/docs/observability.md):
 
 ```bash
 # Langfuse, using the standard LANGFUSE_* env vars
