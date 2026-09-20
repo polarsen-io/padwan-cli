@@ -7,7 +7,7 @@ from rich.table import Table
 from ..utils import console
 
 if TYPE_CHECKING:
-    from padwan_llm.gemini import BatchJob
+    from padwan_ai.gemini import BatchJob
 
 
 def format_job(job: BatchJob) -> None:

@@ -21,7 +21,7 @@ def _missing_extra(backend: TraceBackend) -> SystemExit:
 
 
 def _enable_langfuse() -> None:
-    from padwan_llm.langfuse import instrument
+    from padwan_ai.langfuse import instrument
 
     integration = instrument()
     atexit.register(integration.shutdown)
@@ -39,7 +39,7 @@ def _enable_otlp() -> None:
     from opentelemetry.sdk.trace import TracerProvider
     from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
-    from padwan_llm import otel
+    from padwan_ai import otel
 
     resource = Resource.create({"service.name": "padwan-cli"})
     tracer_provider = TracerProvider(resource=resource)
@@ -56,7 +56,7 @@ def _enable_otlp() -> None:
 
 
 def enable_tracing(backend: TraceBackend) -> None:
-    """Instrument padwan-llm clients for this process, exporting to `backend`.
+    """Instrument padwan-ai clients for this process, exporting to `backend`.
 
     `langfuse` reads the standard `LANGFUSE_*` env vars; `otlp` uses the
     standard `OTEL_EXPORTER_OTLP_*` env vars. Exporters are flushed at exit.

@@ -1,6 +1,6 @@
 from rich.console import Console
 
-from padwan_llm import (
+from padwan_ai import (
     ANTHROPIC_MODELS,
     GEMINI_MODELS,
     GROK_MODELS,

@@ -6,8 +6,8 @@ from pathlib import Path
 from piou import CommandGroup, Option
 from piou.tui import TuiContext, TuiOption
 
-from padwan_llm import GEMINI_MODELS
-from padwan_llm.gemini import BatchRequest, BatchResult, GeminiClient
+from padwan_ai import GEMINI_MODELS
+from padwan_ai.gemini import BatchRequest, BatchResult, GeminiClient
 from ..widgets import BatchProgressWidget, BatchResultWidget
 from .format import console, format_job, format_job_table
 from .utils import load_prompts_from_file, save_results_to_file

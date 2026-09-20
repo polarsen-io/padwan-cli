@@ -1,7 +1,7 @@
 [project]
 
 site_name = "Padwan CLI"
-site_description = "Interactive CLI and TUI for padwan-llm"
+site_description = "Interactive CLI and TUI for padwan-ai"
 site_url = "https://polarsen-io.github.io/padwan-cli"
 
 repo_url = "https://github.com/polarsen-io/padwan-cli"

@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from padwan_llm.gemini import BatchRequest, BatchResult
+from padwan_ai.gemini import BatchRequest, BatchResult
 
 if TYPE_CHECKING:
     from typing import Any
