@@ -20,7 +20,7 @@ pip install "padwan-cli[voice]"
 
 ## Requirements
 
-- Python >= 3.14
+- Python >= 3.15
 - API keys for the providers you want to use (set as environment variables, e.g. `OPENAI_API_KEY`, `GEMINI_API_KEY`, etc.)
 
 ## Local development
