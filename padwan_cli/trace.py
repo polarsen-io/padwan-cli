@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import atexit
 import os
 from typing import Literal, get_args
