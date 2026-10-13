@@ -1,3 +1,9 @@
+## 0.6.1 (2026-10-13)
+
+### Refactor
+
+- drop from __future__ import annotations
+
 ## 0.6.0 (2026-08-25)
 
 ### Feat
