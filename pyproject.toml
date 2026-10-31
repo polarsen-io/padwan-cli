@@ -56,7 +56,7 @@ dev = [
     "pyright>=1.1.408",
     "pytest>=8.0.0",
     "pytest-asyncio>=1.3.0",
-    "pytest-cov>=7.0.0",
+    "pytest-cov>=7.1.0",
     "ruff>=0.11.0",
     # keep the otel and langfuse extras type-checkable/testable in dev
     "padwan-ai[langfuse]>=0.11.1",
