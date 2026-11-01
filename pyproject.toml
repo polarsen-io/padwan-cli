@@ -67,7 +67,7 @@ docs = [
     "zensical>=0.0.31",
 ]
 bump = [
-    "commitizen>=4.0.0",
+    "commitizen>=4.19.3",
 ]
 
 [tool.commitizen]
