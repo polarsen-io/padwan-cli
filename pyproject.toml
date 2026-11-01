@@ -29,7 +29,7 @@ Changelog = "https://github.com/polarsen-io/padwan-cli/blob/master/CHANGELOG.md"
 
 [project.optional-dependencies]
 # `talk` command audio I/O; also needs the PortAudio system lib (libportaudio2).
-voice = ["sounddevice>=0.5"]
+voice = ["sounddevice>=0.5.6"]
 # `--trace otlp`: OTel instrumentation with an OTLP exporter.
 otel = [
     "padwan-ai[otel]>=0.11.1",
