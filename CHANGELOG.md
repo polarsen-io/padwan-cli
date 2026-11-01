@@ -1,3 +1,9 @@
+## 0.6.2 (2026-11-01)
+
+### Fix
+
+- **deps**: update dependency sounddevice to >=0.5.6 (#13)
+
 ## 0.6.1 (2026-10-13)
 
 ### Refactor
