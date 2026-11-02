@@ -57,7 +57,7 @@ dev = [
     "pytest>=9.2.0",
     "pytest-asyncio>=1.4.1",
     "pytest-cov>=7.1.0",
-    "ruff>=0.11.0",
+    "ruff>=0.17.3",
     # keep the otel and langfuse extras type-checkable/testable in dev
     "padwan-ai[langfuse]>=0.11.1",
     "opentelemetry-sdk>=1.44",
@@ -79,3 +79,7 @@ bump_message = "chore(release): release $current_version → $new_version [skip 
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+
+[tool.ruff.lint]
+# ruff 0.17 widened the defaults; keep the previous rule set
+select = ["E4", "E7", "E9", "F"]
