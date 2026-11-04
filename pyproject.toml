@@ -17,8 +17,8 @@ classifiers = [
     "Programming Language :: Python :: 3.15",
 ]
 dependencies = [
-    "padwan-ai[realtime]>=0.11.1",
-    "piou[tui]>=0.36.0",
+    "padwan-ai[realtime]>=0.17.0",
+    "piou[tui]>=0.38.2",
     "tracktolib>=0.74.0",
 ]
 
@@ -32,12 +32,12 @@ Changelog = "https://github.com/polarsen-io/padwan-cli/blob/master/CHANGELOG.md"
 voice = ["sounddevice>=0.5.6"]
 # `--trace otlp`: OTel instrumentation with an OTLP exporter.
 otel = [
-    "padwan-ai[otel]>=0.11.1",
+    "padwan-ai[otel]>=0.17.0",
     "opentelemetry-sdk>=1.45.2",
     "opentelemetry-exporter-otlp>=1.45.2",
 ]
 # `--trace langfuse`: OTel instrumentation with the Langfuse adapter.
-langfuse = ["padwan-ai[langfuse]>=0.11.1"]
+langfuse = ["padwan-ai[langfuse]>=0.17.0"]
 
 [project.scripts]
 padwan-cli = "padwan_cli:main_tui"
@@ -52,19 +52,19 @@ module-root = ""
 
 [dependency-groups]
 dev = [
-    "piou[tui-reload]>=0.36.0",
+    "piou[tui-reload]>=0.38.2",
     "pyright>=1.1.414",
     "pytest>=9.2.0",
     "pytest-asyncio>=1.4.1",
     "pytest-cov>=7.1.0",
     "ruff>=0.17.3",
     # keep the otel and langfuse extras type-checkable/testable in dev
-    "padwan-ai[langfuse]>=0.11.1",
+    "padwan-ai[langfuse]>=0.17.0",
     "opentelemetry-sdk>=1.45.2",
     "opentelemetry-exporter-otlp>=1.45.2",
 ]
 docs = [
-    "zensical>=0.0.73",
+    "zensical>=0.0.74",
 ]
 bump = [
     "commitizen>=4.19.3",
