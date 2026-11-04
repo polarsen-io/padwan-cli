@@ -603,7 +603,7 @@ requires-dist = [
     { name = "padwan-ai", extras = ["langfuse"], marker = "extra == 'langfuse'", specifier = ">=0.11.1" },
     { name = "padwan-ai", extras = ["otel"], marker = "extra == 'otel'", specifier = ">=0.11.1" },
     { name = "padwan-ai", extras = ["realtime"], specifier = ">=0.11.1" },
-    { name = "piou", extras = ["tui"], specifier = ">=0.36.0" },
+    { name = "piou", extras = ["tui"], specifier = ">=0.38.2" },
     { name = "sounddevice", marker = "extra == 'voice'", specifier = ">=0.5.6" },
     { name = "tracktolib", specifier = ">=0.74.0" },
 ]
@@ -615,7 +615,7 @@ dev = [
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.45.2" },
     { name = "opentelemetry-sdk", specifier = ">=1.45.2" },
     { name = "padwan-ai", extras = ["langfuse"], specifier = ">=0.11.1" },
-    { name = "piou", extras = ["tui-reload"], specifier = ">=0.36.0" },
+    { name = "piou", extras = ["tui-reload"], specifier = ">=0.38.2" },
     { name = "pyright", specifier = ">=1.1.414" },
     { name = "pytest", specifier = ">=9.2.0" },
     { name = "pytest-asyncio", specifier = ">=1.4.1" },
@@ -635,15 +635,15 @@ wheels = [
 
 [[package]]
 name = "piou"
-version = "0.36.0"
+version = "0.38.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "rich" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/38/eb/3b09d8b8330b036871c7093ba8abf5f7f3a708b5c1652bc2696252f11c7e/piou-0.36.0.tar.gz", hash = "sha256:22eabc0dc86a314ee095ce2be44ab3dfa3703dbc0b772081df6d47d6e355b345", size = 1650375, upload-time = "2026-08-18T13:09:05.236Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fc/0e/0a03dd6e4678006786301daddd80185129bebc56529c65e620662f88720f/piou-0.38.2.tar.gz", hash = "sha256:7ee9cfc6f166e3b497e1069c682e78c15448dd74d904dd2f7afa79712355b946", size = 1662571, upload-time = "2026-10-19T21:48:17.281Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ab/00/40dae59cf84e64b086b799b92151818edc4eef9536afc146b84000019acb/piou-0.36.0-py3-none-any.whl", hash = "sha256:40094a9c08716e4a1030500631b4b2a9b2fc82f784d4ac3412bc93f834a2d73a", size = 57019, upload-time = "2026-08-18T13:09:04.054Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/e7/2d8e973a77823953e9cbcd1c7519b6b5db6e671955ed7e741054092bf945/piou-0.38.2-py3-none-any.whl", hash = "sha256:7cfdfd6a8b228abe0608f254ad0cff9d3f7784cbdb892ff567c451d46b39990e", size = 61264, upload-time = "2026-10-19T21:48:16.136Z" },
 ]
 
 [package.optional-dependencies]
