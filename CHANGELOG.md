@@ -1,3 +1,9 @@
+## 0.6.5 (2026-11-04)
+
+### Fix
+
+- **deps**: update dependency padwan-ai to >=0.18.0 (#20)
+
 ## 0.6.4 (2026-11-04)
 
 ### Fix

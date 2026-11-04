@@ -1,6 +1,6 @@
 [project]
 name = "padwan-cli"
-version = "0.6.4"
+version = "0.6.5"
 description = "CLI and TUI for padwan-ai"
 readme = "README.md"
 license = "MIT"
