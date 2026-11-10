@@ -530,16 +530,16 @@ wheels = [
 
 [[package]]
 name = "padwan-ai"
-version = "0.18.0"
+version = "0.19.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "niquests" },
     { name = "qh3" },
     { name = "urllib3-future" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ab/21/97701619d90fe4975ca80dbf3c3780d03bd0da845718d19a150e78df742d/padwan_ai-0.18.0.tar.gz", hash = "sha256:59d7e6c884226668a781181f28685d3b96bd603f372b8bc1906ed3a5ac0a644c", size = 136788, upload-time = "2026-11-02T19:33:47.216Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fb/5d/d56d27d8e40129fbc5c691ace7596184db9d21fecec8149bdc66eec0a0d2/padwan_ai-0.19.0.tar.gz", hash = "sha256:545b34e8be4376edc29e181dfac302176cb8baf738df8c2648b4b1e1f4752ab1", size = 138402, upload-time = "2026-11-06T20:43:46.068Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/3c/305c27609c9470c31aded8eb7866a1439afc8f8cba3428465ba3c1604026/padwan_ai-0.18.0-py3-none-any.whl", hash = "sha256:21341d2d472248446a6a98e916626f9a0eba809496d4aca7826e83235af123f0", size = 163299, upload-time = "2026-11-02T19:33:46.006Z" },
+    { url = "https://files.pythonhosted.org/packages/87/71/b074133c57099858fdb06e8e1aca7c3e1149a166ae7bb9e095156c0f1430/padwan_ai-0.19.0-py3-none-any.whl", hash = "sha256:85e7de5b0b489f911ae6f060e3c05c5a146e06ee7ab44ec0653155a62d43423b", size = 164906, upload-time = "2026-11-06T20:43:44.879Z" },
 ]
 
 [package.optional-dependencies]
@@ -600,9 +600,9 @@ docs = [
 requires-dist = [
     { name = "opentelemetry-exporter-otlp", marker = "extra == 'otel'", specifier = ">=1.45.2" },
     { name = "opentelemetry-sdk", marker = "extra == 'otel'", specifier = ">=1.45.2" },
-    { name = "padwan-ai", extras = ["langfuse"], marker = "extra == 'langfuse'", specifier = ">=0.18.0" },
-    { name = "padwan-ai", extras = ["otel"], marker = "extra == 'otel'", specifier = ">=0.18.0" },
-    { name = "padwan-ai", extras = ["realtime"], specifier = ">=0.18.0" },
+    { name = "padwan-ai", extras = ["langfuse"], marker = "extra == 'langfuse'", specifier = ">=0.19.0" },
+    { name = "padwan-ai", extras = ["otel"], marker = "extra == 'otel'", specifier = ">=0.19.0" },
+    { name = "padwan-ai", extras = ["realtime"], specifier = ">=0.19.0" },
     { name = "piou", extras = ["tui"], specifier = ">=0.38.2" },
     { name = "sounddevice", marker = "extra == 'voice'", specifier = ">=0.5.6" },
     { name = "tracktolib", specifier = ">=0.74.0" },
@@ -614,7 +614,7 @@ bump = [{ name = "commitizen", specifier = ">=4.19.3" }]
 dev = [
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.45.2" },
     { name = "opentelemetry-sdk", specifier = ">=1.45.2" },
-    { name = "padwan-ai", extras = ["langfuse"], specifier = ">=0.18.0" },
+    { name = "padwan-ai", extras = ["langfuse"], specifier = ">=0.19.0" },
     { name = "piou", extras = ["tui-reload"], specifier = ">=0.38.2" },
     { name = "pyright", specifier = ">=1.1.414" },
     { name = "pytest", specifier = ">=9.2.0" },
