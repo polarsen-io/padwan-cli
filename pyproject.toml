@@ -18,7 +18,7 @@ classifiers = [
 ]
 dependencies = [
     "padwan-ai[realtime]>=0.18.0",
-    "piou[tui]>=0.38.2",
+    "piou[tui]>=0.38.3",
     "tracktolib>=0.74.0",
 ]
 
@@ -52,7 +52,7 @@ module-root = ""
 
 [dependency-groups]
 dev = [
-    "piou[tui-reload]>=0.38.2",
+    "piou[tui-reload]>=0.38.3",
     "pyright>=1.1.414",
     "pytest>=9.2.0",
     "pytest-asyncio>=1.4.1.post1",

@@ -594,7 +594,7 @@ requires-dist = [
     { name = "padwan-ai", extras = ["langfuse"], marker = "extra == 'langfuse'", specifier = ">=0.18.0" },
     { name = "padwan-ai", extras = ["otel"], marker = "extra == 'otel'", specifier = ">=0.18.0" },
     { name = "padwan-ai", extras = ["realtime"], specifier = ">=0.18.0" },
-    { name = "piou", extras = ["tui"], specifier = ">=0.38.2" },
+    { name = "piou", extras = ["tui"], specifier = ">=0.38.3" },
     { name = "sounddevice", marker = "extra == 'voice'", specifier = ">=0.5.6" },
     { name = "tracktolib", specifier = ">=0.74.0" },
 ]
@@ -606,7 +606,7 @@ dev = [
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.45.2" },
     { name = "opentelemetry-sdk", specifier = ">=1.45.2" },
     { name = "padwan-ai", extras = ["langfuse"], specifier = ">=0.18.0" },
-    { name = "piou", extras = ["tui-reload"], specifier = ">=0.38.2" },
+    { name = "piou", extras = ["tui-reload"], specifier = ">=0.38.3" },
     { name = "pyright", specifier = ">=1.1.414" },
     { name = "pytest", specifier = ">=9.2.0" },
     { name = "pytest-asyncio", specifier = ">=1.4.1.post1" },
@@ -626,15 +626,15 @@ wheels = [
 
 [[package]]
 name = "piou"
-version = "0.38.2"
+version = "0.38.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "rich" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fc/0e/0a03dd6e4678006786301daddd80185129bebc56529c65e620662f88720f/piou-0.38.2.tar.gz", hash = "sha256:7ee9cfc6f166e3b497e1069c682e78c15448dd74d904dd2f7afa79712355b946", size = 1662571, upload-time = "2026-10-19T21:48:17.281Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a1/3f/e9ee68918688dd7bc426f2c28da2c9721351219c6150445957d9aa835675/piou-0.38.3.tar.gz", hash = "sha256:722e4bf2a700cef4c0a16ed01726b141703e532bf6f6da3948294d4af11c4ae4", size = 1670807, upload-time = "2026-11-10T17:42:05.694Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f1/e7/2d8e973a77823953e9cbcd1c7519b6b5db6e671955ed7e741054092bf945/piou-0.38.2-py3-none-any.whl", hash = "sha256:7cfdfd6a8b228abe0608f254ad0cff9d3f7784cbdb892ff567c451d46b39990e", size = 61264, upload-time = "2026-10-19T21:48:16.136Z" },
+    { url = "https://files.pythonhosted.org/packages/0a/56/997318e78ff2f39614edd5734d40e6d85b491d63425d2f2038b74c224571/piou-0.38.3-py3-none-any.whl", hash = "sha256:1849be2a1c063cc858ea2aec5035fc2b2557b6f10528e1365d5b47cf06636b60", size = 61371, upload-time = "2026-11-10T17:42:04.303Z" },
 ]
 
 [package.optional-dependencies]
@@ -941,7 +941,7 @@ wheels = [
 
 [[package]]
 name = "textual"
-version = "8.2.5"
+version = "8.2.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "markdown-it-py", extra = ["linkify"] },
@@ -951,9 +951,9 @@ dependencies = [
     { name = "rich" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/62/1e/1eedc5bac184d00aaa5f9a99095f7e266af3ec46fa926c1051be5d358da1/textual-8.2.5.tar.gz", hash = "sha256:6c894e65a879dadb4f6cf46ddcfedb0173ff7e0cb1fe605ff7b357a597bdbc90", size = 1851596, upload-time = "2026-04-30T08:02:58.956Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/00/21/39a76b01bd5eea82a04baaca7580e105d8c59450df03998345bb2cfb307b/textual-8.2.8.tar.gz", hash = "sha256:3f106a9fbc73e39dd266c9712432087de78a6d644084c7c241d6a25c3169115b", size = 1860502, upload-time = "2026-06-30T06:51:24.495Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cd/01/c4555f9c8a692ff83d84930150540f743ce94c89234f9e9a15ff4baba3a8/textual-8.2.5-py3-none-any.whl", hash = "sha256:247d2aa2faf222749c321f88a736247f37ee2c023604079c7490bfacddfcd4b2", size = 727050, upload-time = "2026-04-30T08:03:01.421Z" },
+    { url = "https://files.pythonhosted.org/packages/fb/be/35261223d9416a0751cdff1c7b4a6f881387218a12d439fe22fefebc8c04/textual-8.2.8-py3-none-any.whl", hash = "sha256:267375fd402dc8d981457212efa71f0e3365fd17bba144ba9bb3ed7563cb374a", size = 731418, upload-time = "2026-06-30T06:51:26.364Z" },
 ]
 
 [[package]]
@@ -985,11 +985,11 @@ wheels = [
 
 [[package]]
 name = "typing-extensions"
-version = "4.15.0"
+version = "4.16.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/72/94/1a15dd82efb362ac84269196e94cf00f187f7ed21c242792a923cdb1c61f/typing_extensions-4.15.0.tar.gz", hash = "sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466", size = 109391, upload-time = "2025-08-25T13:49:26.313Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f6/cc/6253133b5bb138fc3306cebfbda2c520f545d36b5be2c7255cc528bb45d6/typing_extensions-4.16.0.tar.gz", hash = "sha256:dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5", size = 113555, upload-time = "2026-07-02T08:40:05.92Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl", hash = "sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548", size = 44614, upload-time = "2025-08-25T13:49:24.86Z" },
+    { url = "https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl", hash = "sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8", size = 45571, upload-time = "2026-07-02T08:40:04.659Z" },
 ]
 
 [[package]]
