@@ -256,7 +256,7 @@ wheels = [
 
 [[package]]
 name = "langfuse"
-version = "4.14.4"
+version = "5.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "backoff" },
@@ -266,11 +266,12 @@ dependencies = [
     { name = "opentelemetry-sdk" },
     { name = "packaging" },
     { name = "pydantic" },
+    { name = "typing-extensions" },
     { name = "wrapt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/dd/3f/d3387db1f472d2fd4b5de40eb6abedc2f59c9da2224e9d0a79d054a90b81/langfuse-4.14.4.tar.gz", hash = "sha256:48c4bdefc290f61a42881b8048a904ab6b81d37e02496473166836e71ee0ab3a", size = 389680, upload-time = "2026-08-11T17:03:20.472Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/37/b3/65dbc94d809676053b65e89fda729ef7d8a1d13bbb89f2ab407639f631f2/langfuse-5.2.0.tar.gz", hash = "sha256:8cde9e91b44b53444906af9b37efa9c29c647a9f45f9f8435a638026cb3d4693", size = 383092, upload-time = "2026-11-05T09:53:48.439Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d9/1b/a198adc52aa4ffd0886ca0d4e9bb97d45f4f326db206d2395bac67677f5d/langfuse-4.14.4-py3-none-any.whl", hash = "sha256:78692a1d4785a8c255bf6ea967e673e1ee30ce078d646e7b5f7ff44549d45cce", size = 688351, upload-time = "2026-08-11T17:03:21.881Z" },
+    { url = "https://files.pythonhosted.org/packages/f0/48/715e2b612d5d20989e4a338c27d78bef43de327f2192c9b20421f5648868/langfuse-5.2.0-py3-none-any.whl", hash = "sha256:4763cbad358960f1036078a4c6e9f86f04690ea566541709c2c40aa1998e2b0f", size = 660151, upload-time = "2026-11-05T09:53:49.817Z" },
 ]
 
 [[package]]
@@ -340,16 +341,16 @@ wheels = [
 
 [[package]]
 name = "niquests"
-version = "3.21.2"
+version = "3.21.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "charset-normalizer" },
     { name = "urllib3-future" },
     { name = "wassima", marker = "sys_platform != 'emscripten'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1c/2a/e368ec88a02c6bfc56c031ba6da9dd8099ad998fb818c28b687bee74c91a/niquests-3.21.2.tar.gz", hash = "sha256:586d6b9475c9018a42f19f1e4688077b8158101cbf40673c63d2c1a096cc7665", size = 1094494, upload-time = "2026-09-23T06:23:46.681Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0b/e1/e73e2cdb3374e7b442d708de6f87555f00faa4fdb3e347d5ae6df66d472a/niquests-3.21.3.tar.gz", hash = "sha256:6fd476cd2612da6690df6162bb4f314970695bc32ccb68033208d390bb1ac679", size = 1103048, upload-time = "2026-11-09T07:05:00.389Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/65/51/eb07449eb9e7ecae4350b5a40bfcb002d6d26d58cf2cfd2f928ae7c2f559/niquests-3.21.2-py3-none-any.whl", hash = "sha256:73e52614a712ee2f4d410bdd29789ca6a4ed031f8961410156e395d42b091208", size = 229060, upload-time = "2026-09-23T06:23:44.056Z" },
+    { url = "https://files.pythonhosted.org/packages/54/72/4a0ba16f82c2d66854480079f5d6eee25be14025e171a2c25566d0c82db2/niquests-3.21.3-py3-none-any.whl", hash = "sha256:fce4988339389965418ab4ef94f7f246dba648cbeffa90cca33f801b882d3d7a", size = 229403, upload-time = "2026-11-09T07:04:58.352Z" },
 ]
 
 [package.optional-dependencies]
@@ -521,16 +522,16 @@ wheels = [
 
 [[package]]
 name = "padwan-ai"
-version = "0.18.0"
+version = "0.19.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "niquests" },
     { name = "qh3" },
     { name = "urllib3-future" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ab/21/97701619d90fe4975ca80dbf3c3780d03bd0da845718d19a150e78df742d/padwan_ai-0.18.0.tar.gz", hash = "sha256:59d7e6c884226668a781181f28685d3b96bd603f372b8bc1906ed3a5ac0a644c", size = 136788, upload-time = "2026-11-02T19:33:47.216Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/53/30/f242ac582bf7787fe220ab918a8382c31b5f665669144b4c912cdb0057b2/padwan_ai-0.19.1.tar.gz", hash = "sha256:397fe52bed6c543297536f74afc1b4a0fe8597aff60d15a40da00ae144067a37", size = 138330, upload-time = "2026-11-10T09:51:01.193Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/3c/305c27609c9470c31aded8eb7866a1439afc8f8cba3428465ba3c1604026/padwan_ai-0.18.0-py3-none-any.whl", hash = "sha256:21341d2d472248446a6a98e916626f9a0eba809496d4aca7826e83235af123f0", size = 163299, upload-time = "2026-11-02T19:33:46.006Z" },
+    { url = "https://files.pythonhosted.org/packages/76/d9/ca6d8ba0f73e1287417a41302ad995468542c3e16d38571b84daca2875dd/padwan_ai-0.19.1-py3-none-any.whl", hash = "sha256:c04434bfd264124eafd4257699b8d21168671c33b0919dbe6d47055947a5340f", size = 164844, upload-time = "2026-11-10T09:51:00.012Z" },
 ]
 
 [package.optional-dependencies]
@@ -547,7 +548,7 @@ realtime = [
 
 [[package]]
 name = "padwan-cli"
-version = "0.6.5"
+version = "0.6.6"
 source = { editable = "." }
 dependencies = [
     { name = "padwan-ai", extra = ["realtime"] },
@@ -591,9 +592,9 @@ docs = [
 requires-dist = [
     { name = "opentelemetry-exporter-otlp", marker = "extra == 'otel'", specifier = ">=1.45.2" },
     { name = "opentelemetry-sdk", marker = "extra == 'otel'", specifier = ">=1.45.2" },
-    { name = "padwan-ai", extras = ["langfuse"], marker = "extra == 'langfuse'", specifier = ">=0.18.0" },
-    { name = "padwan-ai", extras = ["otel"], marker = "extra == 'otel'", specifier = ">=0.18.0" },
-    { name = "padwan-ai", extras = ["realtime"], specifier = ">=0.18.0" },
+    { name = "padwan-ai", extras = ["langfuse"], marker = "extra == 'langfuse'", specifier = ">=0.19.1" },
+    { name = "padwan-ai", extras = ["otel"], marker = "extra == 'otel'", specifier = ">=0.19.1" },
+    { name = "padwan-ai", extras = ["realtime"], specifier = ">=0.19.1" },
     { name = "piou", extras = ["tui"], specifier = ">=0.38.3" },
     { name = "sounddevice", marker = "extra == 'voice'", specifier = ">=0.5.6" },
     { name = "tracktolib", specifier = ">=0.74.0" },
@@ -605,7 +606,7 @@ bump = [{ name = "commitizen", specifier = ">=4.19.3" }]
 dev = [
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.45.2" },
     { name = "opentelemetry-sdk", specifier = ">=1.45.2" },
-    { name = "padwan-ai", extras = ["langfuse"], specifier = ">=0.18.0" },
+    { name = "padwan-ai", extras = ["langfuse"], specifier = ">=0.19.1" },
     { name = "piou", extras = ["tui-reload"], specifier = ">=0.38.3" },
     { name = "pyright", specifier = ">=1.1.414" },
     { name = "pytest", specifier = ">=9.2.0" },
